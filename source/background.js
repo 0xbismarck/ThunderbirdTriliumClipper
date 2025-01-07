@@ -732,9 +732,9 @@ async function clipEmail(storedParameters)
 
     // Extract data from the message headers
     let messageSubject = message.subject;
-    let messageAuthor = message.author;
     let messageDate = message.date.toLocaleDateString();
     let messageTime = message.date.toLocaleTimeString();
+    let messageAuthor = message.author;
     
     // Create a mail "mid:" URI with the message ID
     // TODO: Put in template subsitition so it's only processed if used
@@ -858,6 +858,7 @@ async function clipEmail(storedParameters)
     
     // Build the Obsidian URI, encoding characters like spaces or punctuation as required.
     // Start with the vault name.
+    let uploadInfo = { abortController: new AbortController() };
     let obsidianUri = "obsidian://new?vault=" + obsidianVaultName;
 
     // The PATH parameter to the URI is optional. Only add it if user specified a non-blank path.
@@ -870,7 +871,35 @@ async function clipEmail(storedParameters)
         // at Obsidian's default location for notes.
         obsidianUri = obsidianUri + "&name=" + encodeURIComponent(noteSubject);
     }
-    
+    // OXB - I know there's other stuff going on around me, but it seems like a good 
+    let triliumUrl = storedParameters["triliumdb"] + "/create-note"
+    let headers = {
+        "authorization": storedParameters["triliumToken"],
+        // "Access-Control-Allow-Origin": "*", 
+        "content-type": "application/json"
+    };
+
+    // {"": , "": "aaaaa", "type": "text", "content": "hello world"}
+
+    let fetchInfo = {
+        mode: "cors",
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            parentNoteId: "LBS9ZEQrHW0m",
+            title: noteSubject,
+            type: "text",
+            content: noteContent
+        }),
+        signal: uploadInfo.abortController.signal,
+    };
+    console.log('fetchInfo: ' +fetchInfo.toString());
+
+    console.log('Got here2');
+    response = await fetch(triliumUrl, fetchInfo);
+    json = await response.json();
+    console.log("Trilium Result: " + json)
+    // End 0XB
     // Finally, append the actual email content as the note content.
     obsidianUri = obsidianUri + "&content=" + encodeURIComponent(noteContent);
     console.log("background.js: obsidianUri: " + obsidianUri);
@@ -991,4 +1020,4 @@ browser.messageDisplay.onMessageDisplayed.addListener(async (tab, message) => {
     // To display text on the tab, call displayStatusText() to set text in the DIV
 });
   
-
+

@@ -61,7 +61,9 @@ defaultParameters["subSpacesWithUnderscores"] = false;
 defaultParameters["additionalDisallowedChars"] = "[]#^";
 defaultParameters["noteNameReplaceChar"] = "-";
 defaultParameters["maxEmailSize"] = "Disabled";
-
+defaultParameters["triliumdb"]  = "http://localhost:37840/etapi";
+defaultParameters["triliumUser"] = "etapi";
+defaultParameters["triliumToken"] = "[ETAPI Token]";
 
 // Store the data to local storage with the given key
 function parameterStore(key, value) {
@@ -221,6 +223,13 @@ document.getElementById('default-obsidianVaultName').onclick = function() {store
 
 document.getElementById('submit-noteFolderPath').onclick = function() {storeOption("noteFolderPath"); };
 document.getElementById('default-noteFolderPath').onclick = function() {storeDefault("noteFolderPath"); };
+
+document.getElementById('submit-triliumdb').onclick = function() {storeOption("triliumdb"); };
+document.getElementById('default-triliumdb').onclick = function() {storeDefault("triliumdb"); };
+
+document.getElementById('submit-triliumToken').onclick = function() {storeOption("triliumToken"); };
+document.getElementById('default-triliumToken').onclick = function() {storeDefault("triliumToken"); };
+
 
 // As a radio button array, attachment save mode submits/defaults all three buttons at once.
 document.getElementById('submit-attachmentSaveEnabled').onclick = function() {storeOption("attachmentSaveEnabled"); };    

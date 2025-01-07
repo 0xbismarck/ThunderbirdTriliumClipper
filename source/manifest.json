@@ -31,7 +31,8 @@
         "storage",
         "menus",
         "downloads",
-        "notifications"
+        "notifications",
+        "<all_urls>"
     ],
     "icons": {
         "64": "images/obsidian-icon-64px.png",
