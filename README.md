@@ -1,3 +1,7 @@
+This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/ThunderbirdObsidianClipper). The code is experimental at this point in time and is being developed. As is, the extension will send e-mail to TriliumNext. 
+
+The references in this project need to be updated to point to ThunderbirdTriliumClipper.
+
 # ThunderbirdObsidianClipper
 ObsidianClipper is an add-on for the Thunderbird email client that lets a user clip messages to the Obsidian notetaking application. Both applications are open source and free to use, just like this add-on!
 
