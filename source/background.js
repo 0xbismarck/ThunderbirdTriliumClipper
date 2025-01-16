@@ -571,7 +571,9 @@ function buildMessageBody(msgPart, maxEmailSize, contentIdToFilenameMap)
         
     // See if there's HTML content
     if (typeof msgPart.body !== 'undefined' && msgPart.contentType == "text/html") {
-            htmlMessageBody = htmlMessageBody + htmlToMarkdown(msgPart.body, contentIdToFilenameMap);
+            // htmlMessageBody = htmlMessageBody + htmlToMarkdown(msgPart.body, contentIdToFilenameMap);
+            htmlMessageBody = htmlMessageBody + msgPart.body;
+
         }
     // If no HTML, see if there's plaintext
     else if (typeof msgPart.body !== 'undefined' && msgPart.contentType == "text/plain") {
@@ -608,11 +610,11 @@ function getRecipients(msg, field, yamlFormat=false)
     
     // Get the correct array of recipents.
     if(field == "to") {
-       recipientArray = msg.recipients;
+        recipientArray = msg.recipients;
     } else if (field == "cc") {
-       recipientArray = msg.ccList;
+        recipientArray = msg.ccList;
     } else if (field == "bcc") {
-       recipientArray = msg.bccList;
+        recipientArray = msg.bccList;
     } else {
         // Not a match - throw an error
         console.log("getRecipients() error - unrecognized field "+ field);
@@ -815,7 +817,7 @@ async function clipEmail(storedParameters)
         _MSGTIME:message.date.toLocaleTimeString(),
         _MSGSUBJECT:messageSubject,
         _MSGAUTHOR:messageAuthor,
-        _MSGTAGSLIST:messageTagList,
+        // _MSGTAGSLIST:messageTagList,
         _MSGIDURI:messageIdUri,
         _MSGCONTENT:messageBody,
         
@@ -838,16 +840,22 @@ async function clipEmail(storedParameters)
         
         _MSGATTACHMENTLIST:attachmentList,
     };
-    
+    console.log("templateMap - " + templateMap)
     // Build a regular expression that will trip on each key in templateMap
     const templateRegExp = new RegExp(Object.keys(templateMap).join('|'), 'gi');
     
+    console.log("templateRegExp - " + templateRegExp)
     // Substitute the template fields with the actual message and note data
     let noteSubject = noteTitleTemplate.replaceAll(templateRegExp, function(matched){
-      return templateMap[matched];
+        return templateMap[matched];
     });
+
+    console.log("noteTemplate - " + noteTemplate)
+    noteTemplate = noteTemplate.replaceAll('\n', '<br>');
+    console.log("noteTemplate - " + noteTemplate)
+
     let noteContent = noteTemplate.replaceAll(templateRegExp, function(matched){
-      return templateMap[matched];
+        return templateMap[matched];
     });
 
     // Now, replace characters that are not supported in Obsidian filenames.
