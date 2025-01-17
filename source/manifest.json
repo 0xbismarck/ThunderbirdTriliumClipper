@@ -1,20 +1,20 @@
 {
     "manifest_version": 2,
-    "name": "ObsidianClipper",
-    "description": "A Thunderbird extension to clip messages to the Obsidian notetaking application.",
-    "version": "0.4.4",
+    "name": "TriliumClipper",
+    "description": "A Thunderbird extension to clip messages to the TriliumNext notetaking application.",
+    "version": "0.0.1",
     
-    "author": "Kevin N. Haw",
+    "author": "0xBismarck",
     "browser_specific_settings": {
         "gecko": {
-            "id": "ObsidianClipper@KevinHaw.com",
+            "id": "TriliumClipper@0xBismarck.com",
             "strict_min_version": "78.0"
         }
     },
     "message_display_action": {
         "default_popup": "messagePopup/popup.html",
-        "default_title": "Obsidian",
-        "default_icon": "images/obsidian-icon-32px.png"
+        "default_title": "TriliumNext",
+        "default_icon": "images/triliumnext-icon-32px.png"
     },
     "options_ui": {
         "page": "options/options.html",
@@ -22,7 +22,7 @@
     },
     "background": {
         "scripts": [
-          "background.js"
+            "background.js"
         ]
     },
     "permissions": [
@@ -35,9 +35,9 @@
         "<all_urls>"
     ],
     "icons": {
-        "64": "images/obsidian-icon-64px.png",
-        "48": "images/obsidian-icon-48px.png",
-        "32": "images/obsidian-icon-32px.png",
-        "16": "images/obsidian-icon-16px.png"
+        "64": "images/triliumnext-icon-64px.png",
+        "48": "images/triliumnext-icon-48px.png",
+        "32": "images/triliumnext-icon-32px.png",
+        "16": "images/triliumnext-icon-16px.png"
     }
 }
