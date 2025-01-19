@@ -423,7 +423,7 @@ async function clipEmail(storedParameters)
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
     
     // Log that we're clipping the message
-    await displayStatusText("ObsidianClipper: Clipping message.");
+    await displayStatusText("TriliumNextClipper: Clipping message.");
     
     // Get the active tab in the current window using the tabs API.
     let tabs = await messenger.tabs.query({ active: true, currentWindow: true });
@@ -562,7 +562,7 @@ async function clipEmail(storedParameters)
         _MSGTIME:message.date.toLocaleTimeString(),
         _MSGSUBJECT:messageSubject,
         _MSGAUTHOR:messageAuthor,
-        // _MSGTAGSLIST:messageTagList,
+        _MSGTAGSLIST:messageTagList,
         _MSGIDURI:messageIdUri,
         _MSGCONTENT:messageBody,
         
@@ -606,33 +606,20 @@ async function clipEmail(storedParameters)
     // Now, replace characters that are not supported in Obsidian filenames.
     noteSubject = correctObsidianFilename(noteSubject, useUnicodeInFilenames, subSpacesWithUnderscores, additionalDisallowedChars, noteNameReplaceChar);
 
-    console.log("background.js: Note subject: \"" + noteSubject + "\"");
+    console.log(`background.js: Note subject: \"${noteSubject}\"`);
     console.log("background.js: Note content:\n" + noteContent);
     
-    // Build the Obsidian URI, encoding characters like spaces or punctuation as required.
-    // Start with the vault name.
+    // Build the TriliumNext URI
     let uploadInfo = { abortController: new AbortController() };
-    let obsidianUri = "obsidian://new?vault=" + obsidianVaultName;
-
-    // The PATH parameter to the URI is optional. Only add it if user specified a non-blank path.
-    if(noteFolderPath != undefined && /[^\s]/.test(noteFolderPath) ) {
-        // Path specified. Use FILE parameter to specify where the file should
-        // go and what it should be called.
-        obsidianUri = obsidianUri + "&file=" + encodeURIComponent(noteFolderPath + "/" + noteSubject);
-    } else {
-        // Path not specified. Use NAME parameter to specify file anme and that it should be placed
-        // at Obsidian's default location for notes.
-        obsidianUri = obsidianUri + "&name=" + encodeURIComponent(noteSubject);
-    }
-    // OXB - I know there's other stuff going on around me, but it seems like a good 
     let triliumUrl = storedParameters["triliumdb"] + "/create-note"
+
+
+    // Build the TriliumNext http header.
     let headers = {
         "authorization": storedParameters["triliumToken"],
         // "Access-Control-Allow-Origin": "*", 
         "content-type": "application/json"
     };
-
-    // {"": , "": "aaaaa", "type": "text", "content": "hello world"}
 
     let fetchInfo = {
         mode: "cors",
@@ -647,29 +634,17 @@ async function clipEmail(storedParameters)
         signal: uploadInfo.abortController.signal,
     };
     console.log('fetchInfo: ' +fetchInfo.toString());
-
-    console.log('Got here2');
-    response = await fetch(triliumUrl, fetchInfo);
-    json = await response.json();
-    console.log("Trilium Result: " + json)
-    // End 0XB
-    // Finally, append the actual email content as the note content.
-    obsidianUri = obsidianUri + "&content=" + encodeURIComponent(noteContent);
-    console.log("background.js: obsidianUri: " + obsidianUri);
     
     // Log status
-    await displayStatusText("ObsidianClipper: Sending data to Obsidian application.");
+    await displayStatusText("TriliumNextClipper: Sending data to Obsidian application.");
     
     // Create new note
-    // Supposedly, there's a defacto 200 char limit to URIs (https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)
-    // However, testing of emails of near 20K found a URI max size of 35717 bytes.
-    // TODO: If there's problems with long notes, add a loop with APPEND to append 
-    // note content a piece at a time to handle bigger emails.
-    let openedWindow;
-    openedWindow = window.open(obsidianUri, "_self");
+    response = await fetch(triliumUrl, fetchInfo);
+    json = await response.json();
+    console.log("Trilium Result: " + json)    
     
     // Log status
-    await displayStatusText("ObsidianClipper: Message clipped.");
+    await displayStatusText("TriliumNextClipper: Message clipped.");
 }
 
 // Wrapper to run the email clip code
