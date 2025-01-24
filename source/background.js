@@ -409,6 +409,9 @@ function getRecipients(msg, field, yamlFormat=false)
 async function clipEmail(storedParameters)
 {
     // Read the passed parameters that configure the app.
+    let triliumdb = "";
+    let triliumToken = "";
+    let triliumParentNoteId = ""
     let obsidianVaultName = "";
     let noteFolderPath = "";
     let useUnicodeInFilenames = false;
@@ -421,7 +424,7 @@ async function clipEmail(storedParameters)
     let attachmentSaveEnabled = false;
     let htmlClippingEnabled = true;
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
-    
+
     // Log that we're clipping the message
     await displayStatusText("TriliumNextClipper: Clipping message.");
     
@@ -432,7 +435,9 @@ async function clipEmail(storedParameters)
     if( (storedParameters["obsidianVaultName"] == undefined) ||
         (storedParameters["noteFolderPath"] == undefined) ||
         (storedParameters["noteFilenameTemplate"] == undefined) ||
-        (storedParameters["noteContentTemplate"] == undefined) ) {
+        (storedParameters["noteContentTemplate"] == undefined) || 
+        (storedParameters["triliumdb"] == undefined) || 
+        (storedParameters["parentNoteId"] == undefined)) {
             // Warn user that add-on needs configuring.
             await displayAlert("ERROR: Please configure ObsidianClipper on its Options page before using.  " +
                 "Look in Settings->Add-ons Manager->Obsidian Clipper->Options tab");
@@ -451,7 +456,10 @@ async function clipEmail(storedParameters)
             attachmentSaveEnabled = storedParameters["attachmentSaveEnabled"];
             maxEmailSize = storedParameters["maxEmailSize"];
             htmlClippingEnabled = storedParameters["htmlClippingEnabled"];
-            
+            triliumdb = storedParameters["triliumdb"];
+            triliumToken = storedParameters["triliumToken"];
+            triliumParentNoteId = storedParameters["parentNoteId"];
+
             // Correct any parameters the won't cause fatal errors when missing
             // by giving them default values.
             if(undefined == useUnicodeInFilenames) {useUnicodeInFilenames = true;}
@@ -596,6 +604,7 @@ async function clipEmail(storedParameters)
     });
 
     console.log("noteTemplate - " + noteTemplate)
+    // the template in the settings uses the newline character. this doesn't carry over to TN because html ignores the newline character. Replacing it with the html equivilent. 
     noteTemplate = noteTemplate.replaceAll('\n', '<br>');
     console.log("noteTemplate - " + noteTemplate)
 
@@ -611,12 +620,12 @@ async function clipEmail(storedParameters)
     
     // Build the TriliumNext URI
     let uploadInfo = { abortController: new AbortController() };
-    let triliumUrl = storedParameters["triliumdb"] + "/create-note"
+    let triliumUrl = triliumdb + "/create-note"
 
 
     // Build the TriliumNext http header.
     let headers = {
-        "authorization": storedParameters["triliumToken"],
+        "authorization": triliumToken,
         // "Access-Control-Allow-Origin": "*", 
         "content-type": "application/json"
     };
@@ -626,7 +635,7 @@ async function clipEmail(storedParameters)
         method: "POST",
         headers,
         body: JSON.stringify({
-            parentNoteId: "LBS9ZEQrHW0m",
+            parentNoteId: triliumParentNoteId,
             title: noteSubject,
             type: "text",
             content: noteContent
@@ -636,15 +645,30 @@ async function clipEmail(storedParameters)
     console.log('fetchInfo: ' +fetchInfo.toString());
     
     // Log status
-    await displayStatusText("TriliumNextClipper: Sending data to Obsidian application.");
+    await displayStatusText("TriliumNextClipper: Sending data to TriliumNext application.");
     
     // Create new note
     response = await fetch(triliumUrl, fetchInfo);
     json = await response.json();
-    console.log("Trilium Result: " + json)    
-    
+    responseStatus = ""
+    if (response.ok)
+        {
+        //{'note': {'noteId': 'ww1AZxxC0DaE', 'isProtected': False, 'title': 'aaaaa', 'type': 'text', 'mime': 'text/html', 'blobId': 'aHCJd06HhUBWJWIDePpT', 
+        //'dateCreated': '2025-01-23 23:17:48.821-0500', 'dateModified': '2025-01-23 23:17:48.823-0500', 'utcDateCreated': '2025-01-24 04:17:48.822Z', 
+        //'utcDateModified': '2025-01-24 04:17:48.823Z', 'parentNoteIds': ['LVA9YEQrPW0d'], 'childNoteIds': [], 'parentBranchIds': ['LVA9YEQrPW0d_ww1AZxTJ0FaF'], 
+        //'childBranchIds': [], 'attributes': []}, 'branch': {'branchId': 'LVA9YEQrPW0d_ww1AZxTJ0FaF', 'noteId': 'ww1AZxTJ0FaF', 'parentNoteId': 'LVA9YEQrPW0d', 
+        //'prefix': None, 'notePosition': 40, 'isExpanded': False, 'utcDateModified': '2025-01-24 04:17:48.824Z'}}
+        console.log("Trilium Result: " + json.noteId);    
+        await displayStatusText("TriliumNextClipper: Message clipped.");
+    }
+    else
+    {
+        // {'status': 400, 'code': 'PROPERTY_VALIDATION_ERROR', 'message': "Validation failed on property 'parentNoteId': Note 'LVA9YEQrPW0d' does not exist."}
+        console.log(json.message);
+        await displayAlert("TriliumNextClipper: " + json.message);
+    }   
     // Log status
-    await displayStatusText("TriliumNextClipper: Message clipped.");
+    // await displayStatusText(responseStatus);
 }
 
 // Wrapper to run the email clip code

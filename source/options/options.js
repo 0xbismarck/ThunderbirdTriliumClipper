@@ -64,6 +64,7 @@ defaultParameters["maxEmailSize"] = "Disabled";
 defaultParameters["triliumdb"]  = "http://localhost:37840/etapi";
 defaultParameters["triliumUser"] = "etapi";
 defaultParameters["triliumToken"] = "[ETAPI Token]";
+defaultParameters["parentNoteId"] = ""
 
 // Store the data to local storage with the given key
 function parameterStore(key, value) {
@@ -229,6 +230,9 @@ document.getElementById('default-triliumdb').onclick = function() {storeDefault(
 
 document.getElementById('submit-triliumToken').onclick = function() {storeOption("triliumToken"); };
 document.getElementById('default-triliumToken').onclick = function() {storeDefault("triliumToken"); };
+
+document.getElementById('submit-parentNoteId').onclick = function() {storeOption("parentNoteId"); };
+document.getElementById('default-parentNoteId').onclick = function() {storeDefault("parentNoteId"); };
 
 
 // As a radio button array, attachment save mode submits/defaults all three buttons at once.
