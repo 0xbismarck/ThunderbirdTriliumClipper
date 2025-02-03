@@ -673,9 +673,7 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
     // Build the message tag list that reflects how the email was tagged.
 
     let uploadInfo = { abortController: new AbortController() };
-    let triliumUrl = triliumdb + "/attributes"
-
-    // let messageTagList = "email";
+    
     if(undefined != message.tags) {
         // Get a master list of tags known by Thunderbird
         let knownTagArray = await messenger.messages.listTags();
@@ -704,20 +702,10 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
                 };
                 console.log("tagText = " + tagText)
                 // Create new attribute on the note
-                response = await fetch(triliumUrl, fetchInfo);
-                json = await response.json();
-                if (response.ok)
-                    {
-                        console.log("it worked...");
-                    }
-                else {
-                    console.log("failure adding attribute");
-                    console.log(json.message)
-                }
+                addNoteAttribute(fetchInfo, triliumdb)
             }
         }
 
-    // console.log("MSG Tag List - " + messageTagList)
     }
 }
 
@@ -725,7 +713,6 @@ async function updateNoteIcon( noteId, triliumdb, headers ) {
     // Build the message tag list that reflects how the email was tagged.
 
     let uploadInfo = { abortController: new AbortController() };
-    let triliumUrl = triliumdb + "/attributes"
 
     //change the note icon
     let fetchInfo = {
@@ -741,8 +728,24 @@ async function updateNoteIcon( noteId, triliumdb, headers ) {
 
         signal: uploadInfo.abortController.signal,
     };
+    addNoteAttribute(fetchInfo, triliumdb)
+}
+
+async function addNoteAttribute (fetchInfo, triliumdb) {
+    // Method calls the create attribute function of ETAPI
+    let triliumUrl = triliumdb + "/attributes"
+
     response = await fetch(triliumUrl, fetchInfo);
     json = await response.json();
+    if (response.ok)
+        {
+            console.log("attribute added");
+        }
+    else {
+        console.log("failure adding attribute");
+        console.log(json.message)
+    }
+
 }
 
 
