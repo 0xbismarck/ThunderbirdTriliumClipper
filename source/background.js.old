@@ -673,7 +673,6 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
     // Build the message tag list that reflects how the email was tagged.
 
     let uploadInfo = { abortController: new AbortController() };
-    let triliumUrl = triliumdb + "/attributes"
 
     // let messageTagList = "email";
     if(undefined != message.tags) {
@@ -704,28 +703,18 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
                 };
                 console.log("tagText = " + tagText)
                 // Create new attribute on the note
-                response = await fetch(triliumUrl, fetchInfo);
-                json = await response.json();
-                if (response.ok)
-                    {
-                        console.log("it worked...");
-                    }
-                else {
-                    console.log("failure adding attribute");
-                    console.log(json.message)
-                }
+                addNoteAttribute(fetchInfo, triliumdb)
             }
         }
 
     // console.log("MSG Tag List - " + messageTagList)
-    }
 }
+
 
 async function updateNoteIcon( noteId, triliumdb, headers ) {
     // Build the message tag list that reflects how the email was tagged.
 
     let uploadInfo = { abortController: new AbortController() };
-    let triliumUrl = triliumdb + "/attributes"
 
     //change the note icon
     let fetchInfo = {
@@ -741,10 +730,26 @@ async function updateNoteIcon( noteId, triliumdb, headers ) {
 
         signal: uploadInfo.abortController.signal,
     };
-    response = await fetch(triliumUrl, fetchInfo);
-    json = await response.json();
+    addNoteAttribute(fetchInfo, triliumdb)
 }
 
+
+// Method calls the attribute function of ETAPI
+async function addNoteAttribute (fetchInfo, triliumdb) {
+    let triliumUrl = triliumdb + "/attributes"
+
+    response = await fetch(triliumUrl, fetchInfo);
+    json = await response.json();
+    if (response.ok)
+        {
+            console.log("it worked...");
+        }
+    else {
+        console.log("failure adding attribute");
+        console.log(json.message)
+    }
+
+}
 
 // Wrapper to run the email clip code
 function doEmailClip() {
