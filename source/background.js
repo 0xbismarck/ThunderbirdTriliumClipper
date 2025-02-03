@@ -440,7 +440,7 @@ async function clipEmail(storedParameters)
         (storedParameters["parentNoteId"] == undefined)) {
             // Warn user that add-on needs configuring.
             await displayAlert("ERROR: Please configure ObsidianClipper on its Options page before using.  " +
-                "Look in Settings->Add-ons Manager->Obsidian Clipper->Options tab");
+                "Look in Settings->Add-ons Manager->Trilium Clipper->Options tab");
             return;
         } else {
             // Load parameters from storage
@@ -495,27 +495,28 @@ async function clipEmail(storedParameters)
     // TODO: Put in template subsitition so it's only processed if used
     let messageIdUri = "mid:" + message.headerMessageId;        // Create a mail "mid:" URI with the message ID
     
-    // Build the message tag list that reflects how the email was tagged.
-    // TODO: Put in a function so it's not processed if not used
-    let messageTagList = "";
-    if(undefined != message.tags) {
-        // Get a master list of tags known by Thunderbird
-        let knownTagArray = await messenger.messages.listTags();
+    // // Build the message tag list that reflects how the email was tagged.
+    // // TODO: Put in a function so it's not processed if not used
+    // let messageTagList = "#email";
+    // if(undefined != message.tags) {
+    //     // Get a master list of tags known by Thunderbird
+    //     let knownTagArray = await messenger.messages.listTags();
         
-        // Loop through the tags on the email and find any matches
-        for (var currMsgTagKeyString of message.tags) {
-            // Check for a match of the email's tag against the master list.
-            // Note that we're testing ".key" values here. Human readable strings are processed after a match.
-            var matchingTagEntry = knownTagArray.find((t) => t.key == currMsgTagKeyString);
-            if(undefined != matchingTagEntry) {
-                // We have a match. Take the human readable string, replace spaces, and add a hashtag.
-                var tagText = " #" + matchingTagEntry.tag.replaceAll(' ', '-');
+    //     // Loop through the tags on the email and find any matches
+    //     for (var currMsgTagKeyString of message.tags) {
+    //         // Check for a match of the email's tag against the master list.
+    //         // Note that we're testing ".key" values here. Human readable strings are processed after a match.
+    //         var matchingTagEntry = knownTagArray.find((t) => t.key == currMsgTagKeyString);
+    //         if(undefined != matchingTagEntry) {
+    //             // We have a match. Take the human readable string, replace spaces, and add a hashtag.
+    //             var tagText = " #" + matchingTagEntry.tag.replaceAll(' ', '-');
                 
-                // Add tag to the tag list
-                messageTagList = messageTagList + tagText;
-            }
-        }
-    }
+    //             // Add tag to the tag list
+    //             messageTagList = messageTagList + tagText;
+    //         }
+    //     }
+    // }
+    // console.log("MSG Tag List - " + messageTagList)
     
     // Save message attachments and get a markdown list with links to them and a map of content-id to the files.
     const contentIdToFilenameMap = [];
@@ -570,7 +571,6 @@ async function clipEmail(storedParameters)
         _MSGTIME:message.date.toLocaleTimeString(),
         _MSGSUBJECT:messageSubject,
         _MSGAUTHOR:messageAuthor,
-        _MSGTAGSLIST:messageTagList,
         _MSGIDURI:messageIdUri,
         _MSGCONTENT:messageBody,
         
@@ -593,6 +593,7 @@ async function clipEmail(storedParameters)
         
         _MSGATTACHMENTLIST:attachmentList,
     };
+    // _MSGTAGSLIST:messageTagList,
     console.log("templateMap - " + templateMap)
     // Build a regular expression that will trip on each key in templateMap
     const templateRegExp = new RegExp(Object.keys(templateMap).join('|'), 'gi');
@@ -650,25 +651,100 @@ async function clipEmail(storedParameters)
     // Create new note
     response = await fetch(triliumUrl, fetchInfo);
     json = await response.json();
-    responseStatus = ""
-    if (response.ok)
-        {
-        //{'note': {'noteId': 'ww1AZxxC0DaE', 'isProtected': False, 'title': 'aaaaa', 'type': 'text', 'mime': 'text/html', 'blobId': 'aHCJd06HhUBWJWIDePpT', 
-        //'dateCreated': '2025-01-23 23:17:48.821-0500', 'dateModified': '2025-01-23 23:17:48.823-0500', 'utcDateCreated': '2025-01-24 04:17:48.822Z', 
-        //'utcDateModified': '2025-01-24 04:17:48.823Z', 'parentNoteIds': ['LVA9YEQrPW0d'], 'childNoteIds': [], 'parentBranchIds': ['LVA9YEQrPW0d_ww1AZxTJ0FaF'], 
-        //'childBranchIds': [], 'attributes': []}, 'branch': {'branchId': 'LVA9YEQrPW0d_ww1AZxTJ0FaF', 'noteId': 'ww1AZxTJ0FaF', 'parentNoteId': 'LVA9YEQrPW0d', 
-        //'prefix': None, 'notePosition': 40, 'isExpanded': False, 'utcDateModified': '2025-01-24 04:17:48.824Z'}}
-        console.log("Trilium Result: " + json.noteId);    
+    if (response.ok) {
+        /*{'note': {'noteId': 'ww1AZxxC0DaE', 'isProtected': False, 'title': 'aaaaa', 'type': 'text', 'mime': 'text/html', 'blobId': 'aHCJd06HhUBWJWIDePpT', 
+        'dateCreated': '2025-01-23 23:17:48.821-0500', 'dateModified': '2025-01-23 23:17:48.823-0500', 'utcDateCreated': '2025-01-24 04:17:48.822Z', 
+        'utcDateModified': '2025-01-24 04:17:48.823Z', 'parentNoteIds': ['LVA9YEQrPW0d'], 'childNoteIds': [], 'parentBranchIds': ['LVA9YEQrPW0d_ww1AZxTJ0FaF'], 
+        'childBranchIds': [], 'attributes': []}, 'branch': {'branchId': 'LVA9YEQrPW0d_ww1AZxTJ0FaF', 'noteId': 'ww1AZxTJ0FaF', 'parentNoteId': 'LVA9YEQrPW0d', 
+        'prefix': None, 'notePosition': 40, 'isExpanded': False, 'utcDateModified': '2025-01-24 04:17:48.824Z'}}*/
+        // console.log("Trilium Result: " + json.note.noteId);    
+        labelNewNote(message, json.note.noteId, triliumdb, headers);
+        updateNoteIcon(json.note.noteId, triliumdb, headers); // @TODO - updating this configurable
         await displayStatusText("TriliumNextClipper: Message clipped.");
     }
-    else
-    {
+    else {
         // {'status': 400, 'code': 'PROPERTY_VALIDATION_ERROR', 'message': "Validation failed on property 'parentNoteId': Note 'LVA9YEQrPW0d' does not exist."}
         console.log(json.message);
         await displayAlert("TriliumNextClipper: " + json.message);
     }   
-    // Log status
-    // await displayStatusText(responseStatus);
+}
+
+async function labelNewNote(message, noteId, triliumdb, headers ) {
+    // Build the message tag list that reflects how the email was tagged.
+
+    let uploadInfo = { abortController: new AbortController() };
+    let triliumUrl = triliumdb + "/attributes"
+
+    // let messageTagList = "email";
+    if(undefined != message.tags) {
+        // Get a master list of tags known by Thunderbird
+        let knownTagArray = await messenger.messages.listTags();
+        
+        // Loop through the tags on the email and find any matches
+        for (var currMsgTagKeyString of message.tags) {
+            // Check for a match of the email's tag against the master list.
+            // Note that we're testing ".key" values here. Human readable strings are processed after a match.
+            var matchingTagEntry = knownTagArray.find((t) => t.key == currMsgTagKeyString);
+            // matchingTagEntry.push("email");
+            if(undefined != matchingTagEntry) {
+                // We have a match. Take the human readable string, replace spaces, and add a hashtag.
+
+                var tagText = matchingTagEntry.tag.replaceAll(' ', '-');
+                let fetchInfo = {
+                    mode: "cors",
+                    method: "POST",
+                    headers,
+                    body: JSON.stringify({
+                        noteId: noteId,
+                        type: "label",
+                        name: tagText,
+                        value: ""
+                    }),
+                    signal: uploadInfo.abortController.signal,
+                };
+                console.log("tagText = " + tagText)
+                // Create new attribute on the note
+                response = await fetch(triliumUrl, fetchInfo);
+                json = await response.json();
+                if (response.ok)
+                    {
+                        console.log("it worked...");
+                    }
+                else {
+                    console.log("failure adding attribute");
+                    console.log(json.message)
+                }
+            }
+        }
+
+    // console.log("MSG Tag List - " + messageTagList)
+}
+
+
+async function updateNoteIcon( noteId, triliumdb, headers ) {
+    // Build the message tag list that reflects how the email was tagged.
+
+    let uploadInfo = { abortController: new AbortController() };
+    let triliumUrl = triliumdb + "/attributes"
+
+        //change the note icon
+        let fetchInfo = {
+            mode: "cors",
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+                noteId: noteId,
+                type: "label",
+                name: "iconClass",
+                value: "bx bx-envelope"
+            }),
+
+            signal: uploadInfo.abortController.signal,
+        };
+        response = await fetch(triliumUrl, fetchInfo);
+        json = await response.json();
+    }
+
 }
 
 // Wrapper to run the email clip code
