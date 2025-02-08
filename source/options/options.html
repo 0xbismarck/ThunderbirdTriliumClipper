@@ -9,6 +9,41 @@
 
 <body>
   <hr>
+  <h1>Trilium URL</h1>
+  <p>The Trilium URL is the location where TriliumNotes sends data for the creation of a new note. 
+    By default, when TriliumNext is installed on your local machine, it will receive the note on the 
+    localhost:port combination below. Otherwise you need to specifiy where Thunderbird needs to send data.
+    <form>
+      <label><br><b>To connect to your Trilium database, enter the URL below.:</b></label>
+      <input type="text" id="triliumdb">
+      <button id="submit-triliumdb">Save</button>
+      <button id="default-triliumdb">Restore Default</button>
+    </form> 
+  <hr>
+  <h1>ETAPI Token (Required)</h1>
+  <p>TriliumNext uses an authentication token to confirm that Thunderbird has permission to create notes.
+    To generate an ETAPI token, you need to open TriliumNext and click on the TriliumNext icon in the upper left corner. 
+    Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it below.
+    <form>
+      <label><b>ETAPI Token for Authenticating to Trilium.:</b></label>
+      <input type="text" id="triliumToken">
+      <button id="submit-triliumToken">Save</button>
+      <button id="default-triliumToken">Restore Default</button>
+    </form> 
+  <hr>
+  <h1>ParentNoteId</h1>
+  <p>Thunderbird needs to know where in TriliumNext the software should send the new note. The noteId for any note can be 
+    found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called 
+    "Note ID". Enter that value below.
+    <!-- <img src="../images/noteID.png"> -->
+    <form>
+      <label><b>Parent Note Id of where the note will be sent</b></label>
+      <input type="text" id="parentNoteId">
+      <button id="submit-parentNoteId">Save</button>
+      <button id="default-parentNoteId">Restore Default</button>
+    </form> 
+  <hr>
+
   <h1>Obsidian Vault Name</H1>
   <p>The vault is a folder on your local file system where Obsidian stores your notes. 
   The vault name is chosen by the user when they first create it.
@@ -270,31 +305,6 @@
   
     
     <hr>
-    <h1>Hello World</h1>
-    <p>To connect to your Trilium database, enter the URL below.
-    <form>
-      <label><br><b>Trilium URL:</b></label>
-      <input type="text" id="triliumdb">
-      <button id="submit-triliumdb">Save</button>
-      <button id="default-triliumdb">Restore Default</button>
-    </form> 
-  <hr>
-  <p>ETAPI Token for Authenticating to Trilium. (Required)
-    <form>
-      <label><b>ETAPI Token:</b></label>
-      <input type="text" id="triliumToken">
-      <button id="submit-triliumToken">Save</button>
-      <button id="default-triliumToken">Restore Default</button>
-    </form> 
-  <hr>
-  <p>Parent Note Id of where the note will be sent
-    <form>
-      <label><b>ParentNoteId:</b></label>
-      <input type="text" id="parentNoteId">
-      <button id="submit-parentNoteId">Save</button>
-      <button id="default-parentNoteId">Restore Default</button>
-    </form> 
-  <hr>
 
   <h1>Color Coded Note Tags (Optional Feature)</h1>
   <p>The _MSGTAGSLIST placeholder described above tells the add-on
