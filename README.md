@@ -2,19 +2,19 @@ This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/
 
 The references in this project need to be updated to point to ThunderbirdTriliumClipper.
 
-# ThunderbirdObsidianClipper
-ObsidianClipper is an add-on for the Thunderbird email client that lets a user clip messages to the Obsidian notetaking application. Both applications are open source and free to use, just like this add-on!
+# ThunderbirdTriliumClipper
+TriliumClipper is an add-on for the Thunderbird email client that lets a user clip messages to the TriliumNext notetaking application. Both applications are open source and free to use, just like this add-on!
 
 In addition to the information below, there is a [User Guide](./docs/user-guide.md) giving detailed information on how to use the add-on.
 
 ## Installation
-- You will first need to have the Obsidian notetaking app on your local platform as well as the Thunderbird email client.
+- You will first need to have the TriliumNext notetaking app on your local platform as well as the Thunderbird email client.
   - You can download Thunderbird for free [here](https://www.thunderbird.net/en-US/download/).
-  - You can download Obsidian for free [here](https://obsidian.md/download).
-  - You can install the *Obsidian Clipper* add-on into Thunderbird in two ways:
-    - By searching for "ObsdianClipper" in the Add-on mMnager (*Settings->Add-ons Manager*).
-    - Or by downloading a file from the [Thunderbird Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), clicking the "Download Now" button to get an XPI file, and installing that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*).
-- After installing ObsidianClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Obsidian Clipper->Options tab*) and configure the add-on to work with Obsidian on your machine.
+  - You can download TriliumNext for free [here](https://github.com/TriliumNext/Notes/releases).
+  - You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
+    <!-- - By searching for "ObsdianClipper" in the Add-on mMnager (*Settings->Add-ons Manager*).
+    - Or by downloading a file from the [Thunderbird Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), clicking the "Download Now" button to get an XPI file, and installing that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*). -->
+- After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
   - *Obsidian Vault Name* - is the name of the vault you created to keep your notes in when you set up Obsidian.
   - *Note Folder Path* - an optional parameter that allows the user to specifiy a location within the
   vault to place clipped emails. By default, this will be the folder "ClippedEmails.". If this parameter is left blank, new notes in Obsidian will appear
@@ -27,9 +27,9 @@ In addition to the information below, there is a [User Guide](./docs/user-guide.
 - After you've installed and configured the add-on, you're ready to clip emails!
 
 ## Usage
-To use ObsidianClipper, just select an email and either right click it to find an "Obsidian" icon in the menu or open the email and look for the "Obsidian" icon on the header (where you will also find the Reply and Forward buttons). Press the "Obsidian" button and your Obsidian application will launch and load your vault and your email will be clipped into Obsidian. 
+To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "Obsidian" button and your Obsidian application will launch and load your vault and your email will be clipped into TriliumNext. 
 
-![Click on the Obsidian Clipper icon when viewing a message to save it into Obsidian.](docs/MessagePane.png)
+![Click on the Trilium Clipper icon when viewing a message to save it into TriliumNext.](docs/MessagePane.png)
 
 Once your email has been clipped, it will look like the screenshot below. By default, your note will be in the top level "ClippedEmails" folder (Obsidian will create the folder if needed), but you can change it with the *Note Folder Path* option mentioned above.
 
