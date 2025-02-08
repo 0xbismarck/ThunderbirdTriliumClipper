@@ -35,8 +35,6 @@ function onError(error) {
 // Set up array of default parameters for each HTML field.
 // remember to assign listeners to any new field (below)
 var defaultParameters = [];
-defaultParameters["obsidianVaultName"] = "_myNotes";
-defaultParameters["noteFolderPath"] = "ClippedEmails";
 defaultParameters["attachmentFolderPath"] = "ClippedEmails/_resources";
 defaultParameters["attachmentSaveEnabled"] = false;
 defaultParameters["noteFilenameTemplate"] = "Email (_MSGDATE) : _MSGSUBJECT";
@@ -219,11 +217,6 @@ async function setupColorCodedTagsCssField()
 ///////////////////////
 
 // Set up event listeners for option buttons.
-document.getElementById('submit-obsidianVaultName').onclick = function() {storeOption("obsidianVaultName"); };
-document.getElementById('default-obsidianVaultName').onclick = function() {storeDefault("obsidianVaultName"); };
-
-document.getElementById('submit-noteFolderPath').onclick = function() {storeOption("noteFolderPath"); };
-document.getElementById('default-noteFolderPath').onclick = function() {storeDefault("noteFolderPath"); };
 
 document.getElementById('submit-triliumdb').onclick = function() {storeOption("triliumdb"); };
 document.getElementById('default-triliumdb').onclick = function() {storeDefault("triliumdb"); };

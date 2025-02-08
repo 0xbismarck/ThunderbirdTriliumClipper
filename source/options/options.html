@@ -44,43 +44,8 @@
     </form> 
   <hr>
 
-  <h1>Obsidian Vault Name</H1>
-  <p>The vault is a folder on your local file system where Obsidian stores your notes. 
-  The vault name is chosen by the user when they first create it.
-  You will need to know the name of the vault where you want to store emails
-  that you clip. If you use more than one vault, make sure you enter the name of
-  the vault you want to use for clipping emails.
-  <p>If you are unsure of your vault name or have not set up a vault on your local machine yet,
-  go to the <a href="https://help.obsidian.md">Obsidian Help</a> page for details.
-  
-  <form>
-    <label><b>Store clipped emails in this Obsidian vault</b></label>
-    <input type="text" id="obsidianVaultName">
-    <button id="submit-obsidianVaultName">Save</button>
-    <button id="default-obsidianVaultName">Restore Default</button>
-  </form>
-  
   <hr>
-  <h1>Note Folder Path (Optional Parameter)</h1>
-  <p>This optional parameter allows the user to specifiy a location within the
-  vault to place clipped emails. Folders name are separated by slashes, so
-  setting this parameter to 'business/important emails" would place
-  your clipped emails into the 'important emails' folder inside the vault's
-  top level 'business' folder.
-  <p>If this parameter is left blank, new notes in Obsidian will appear
-  in the location indicated in 'Settings->Files & Links->Default location for new notes'.
-  By default, this is usually the most recent folder in use in the Obsidian app.
   
-  <form>
-    <label><b>Store clipped emails in this folder in the Obsidian vault (optional)</b></label>
-    <input type="text" id="noteFolderPath">
-    <button id="submit-noteFolderPath">Save</button>
-    <button id="default-noteFolderPath">Restore Default</button>
-  </form>
-
-
-
-
   <h1>Message Attachments (Optional Feature)</h1>
   <p>This optional feature allows saving files attached to an email message Obsidian.
   <p>To use this feature, set the options below and then perform the steps described in 

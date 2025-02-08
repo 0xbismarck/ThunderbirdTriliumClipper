@@ -412,8 +412,6 @@ async function clipEmail(storedParameters)
     let triliumdb = "";
     let triliumToken = "";
     let triliumParentNoteId = ""
-    let obsidianVaultName = "";
-    let noteFolderPath = "";
     let useUnicodeInFilenames = false;
     let noteTitleTemplate = "";
     let noteTemplate = "";
@@ -432,20 +430,16 @@ async function clipEmail(storedParameters)
     let tabs = await messenger.tabs.query({ active: true, currentWindow: true });
     
     // Check stored parameters - test  options that cause fatal errors if not present
-    if( (storedParameters["obsidianVaultName"] == undefined) ||
-        (storedParameters["noteFolderPath"] == undefined) ||
-        (storedParameters["noteFilenameTemplate"] == undefined) ||
+    if( (storedParameters["noteFilenameTemplate"] == undefined) ||
         (storedParameters["noteContentTemplate"] == undefined) || 
         (storedParameters["triliumdb"] == undefined) || 
         (storedParameters["parentNoteId"] == undefined)) {
             // Warn user that add-on needs configuring.
-            await displayAlert("ERROR: Please configure ObsidianClipper on its Options page before using.  " +
+            await displayAlert("ERROR: Please configure TriliumClipper on its Options page before using.  " +
                 "Look in Settings->Add-ons Manager->Trilium Clipper->Options tab");
             return;
         } else {
             // Load parameters from storage
-            obsidianVaultName = storedParameters["obsidianVaultName"];
-            noteFolderPath = storedParameters["noteFolderPath"];
             useUnicodeInFilenames = storedParameters["unicodeCharSub"];
             noteTitleTemplate = storedParameters["noteFilenameTemplate"];
             noteTemplate = storedParameters["noteContentTemplate"];
