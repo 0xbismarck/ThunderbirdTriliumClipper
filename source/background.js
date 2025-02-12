@@ -588,7 +588,7 @@ async function clipEmail(storedParameters)
         
         _MSGATTACHMENTLIST:attachmentList,
     };
-    // _MSGTAGSLIST:messageTagList,
+
     console.log("templateMap - " + templateMap)
     // Build a regular expression that will trip on each key in templateMap
     const templateRegExp = new RegExp(Object.keys(templateMap).join('|'), 'gi');

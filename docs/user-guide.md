@@ -70,7 +70,6 @@ If you are unsure of your vault name or have not set up a vault on your local ma
   supported placeholders.
 - *Filename Correction and Disallowed Characters* - these fields detail how the clipper should process characters that might be disallowed by
 the Obsidian app or your computer's filesystem.
-- *Color Coded Note Tags (Optional Feature)* - This field is detailed in the [section below of the same name](#Colored-Message-Tags-Optional-Feature).
 
 
 ## Placeholders
@@ -91,7 +90,6 @@ These placeholders and what is substituted in the clipped note are detailed belo
         format that can be used in Obsidian [frontmatter properties](https://help.obsidian.md/Editing+and+formatting/Properties).
         See the [Obsidian Frontmatter Properties](#Obsidian-Frontmatter-Properties) section below for an example.
 - *_MSGAUTHOR* - The message author.
-- *_MSGTAGSLIST* - Include [Email catagory tags](https://support.mozilla.org/en-US/kb/message-tags) in a hashtag spaced list. See below for color coding options.
 - *_MSGATTACHMENTLIST* - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."
 - *_MSGIDURI* - A URI that can be clicked to open the message.
     - For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.
@@ -118,38 +116,6 @@ BCC: _MSGBCC_YAML
 ---
 ```
 
-
-## Colored Message Tags (Optional Feature)
-The *\_MSGTAGSLIST* placeholder in the *Note Content Template* field tells the add-on to insert any 
-[category tags](https://support.mozilla.org/en-US/kb/message-tags) 
-that are attched to the clipped email by Thuderbird. By leveraging
-a powerful feature of Obsidian called [CSS Snippets](https://help.obsidian.md/Extending+Obsidian/CSS+snippets)
-it is possible to cusotmize the colors of these message tags. However, this must be done inside Obsidian itself
-and not within the Thunderbird add-on.
-
-If you are interested in this feature, follow the steps below:
-- In Obsidian, open *Settings*. Then, under *Appearance->CSS snippets*, select Open snippets folder (folder icon).
-
-
-![Here is what Obsidian CSS Snippets controls look like](./Snippets1.png)
-
-- In the snippets folder, use Notepad (Windows), gedit (Linux), or another text editor to create a text file
-ending in ".css" (for example, ThunderbirdClipperColoredTags.css).
-- Back in Thunderbird. open the options for ThunderbirdObsidianClipper (*Settings->add-ons Manager->Obsidian Clipper->Options tab*)
-and scroll down to the text box below the "Color Coded Note Tags" section and cut and paste that 
-to the CSS snippet file. saving the file.
-- Back in Obsidian, under *Appearance->CSS snippets*, select Reload snippets (refresh icon) to see the snippet 
-in the list. Then click on the enable switch (right column, under the folder and refresh icons) to activate the snippet.
-
-![CSS Snippet Enable](./Snippets2.png)
-
-
-You're done! The tags for emails you clip should have matching colors to the tags you use in Thunderbird.
-Should you change those colors or add new tags, just redo the process above.
-
-More information can be found about this color tag technique [on this post in the Obsidian Forums](https://forum.obsidian.md/t/markup-tags-inside-html/75810/5).
-Thanks to users [ariehen](https://forum.obsidian.md/u/ariehen), [CawlinTeffid](https://forum.obsidian.md/u/CawlinTeffid), and [gapmiss](https://forum.obsidian.md/u/gapmiss)
-who helped document it.
 
 ## Troubleshooting
 If ObsidianClipper is not working for you, please take a moment to reread the instructions and reinstall the add-on. You might also consider reinstalling Obsidian on your computer as well.

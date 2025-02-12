@@ -152,7 +152,6 @@
                 See the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">User Guide</a> for an example.</li>
             </ul>
         <li><b>_MSGAUTHOR</b> - The message author.</li>
-        <li><b>_MSGTAGSLIST</b> - Include <a href="https://support.mozilla.org/en-US/kb/message-tags">Email catagory tags</a> in a hashtag spaced list. See below for color coding options.</li>
         <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."</li>
         <li><b>_MSGIDURI</b> - A URI that can be clicked to open the message.</li>
             <ul><li>For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.</li></ul>
@@ -279,21 +278,6 @@
     
     <hr>
 
-  <h1>Color Coded Note Tags (Optional Feature)</h1>
-  <p>The _MSGTAGSLIST placeholder described above tells the add-on
-  to insert any category tags that are attached to the clipped email by Thuderbird
-  into the clipped note. Optionally, you can make the colors of 
-  these tags match the color used in Thunderbird by adding the text below as a CSS
-  snippet in Obsidian. You can learn more by reading about <a href="https://help.obsidian.md/Extending+Obsidian/CSS+snippets">
-  CSS snippets in Obsidian</a> or by using the step by step instructions
-  in the User Guide for this add-on,
-  linked below.
-  
-  <form>
-      <label><b>Cut and paste this text into an Obsidian CSS snippet to have colored tags</b></label>
-      <textarea id="colorCodedTagsCss" readonly>
-      </textarea>
-  </form>
   
   <h1>Getting Help</h1>
   <p>If you are experiencing a problem with the add-on, please visit the 

@@ -51,7 +51,6 @@ defaultParameters["noteContentTemplate"] =
     "---\n\n" +
     "_MSGCONTENT";
     
-defaultParameters["useColorCodedMsgTags"] = true;
 defaultParameters["unicodeCharSub"] = true;
 defaultParameters["htmlClippingEnabled"] = true;
 defaultParameters["subSpacesWithUnderscores"] = false;
@@ -69,7 +68,7 @@ function parameterStore(key, value) {
     storeLocal = browser.storage.local.set({ [key] : value });
     storeLocal.then(() => {
         console.log("parameterStore: Stored parameter [" + key + ", " + value + "] success");  // Huh? Not seeing this on console, but appears to work.
-      }, onError);
+    }, onError);
 }
 
 // Store the contents of an options field to local storage.
@@ -157,60 +156,6 @@ function loadOptionsFields(storedParameters)
     }
 }
 
-async function setupColorCodedTagsCssField()
-{
-    var elem = document.getElementById("colorCodedTagsCss");
-    
-    // Build base block of CSS. Due to the use of the template literals, source file indenting is hosed for a moment...
-    let cssBlock =
- `/*---- tag formatting ----*/
-.markdown-source-view .cm-hashtag {
-  background: var(--color-base-10);
-  color: var(--tag-color);
-  /*border-top: 2px solid;
-  border-bottom: 2px solid;*/
-  line-height: 2em;
-  font-weight: 500;
-}
-.markdown-source-view .cm-hashtag-begin {
-  /*border-left: 2px solid;*/
-  padding-top: 1px;
-  padding-right: 1px;
-  padding-bottom: 3.5px;
-}
-.markdown-source-view .cm-hashtag-end {
-  /*border-right: 2px solid;*/
-  padding-top: 1px;
-  padding-bottom: 3.5px;
-}
-.markdown-preview-view .tag {
-  background: var(--color-base-10);
-  color: var(--tag-color);
-  /*border: 2px solid;*/
-  line-height: 2em;
-  font-weight: 500;
-}
-
-/*---- tag colors ----*/
-`;
-
-    // Get a master list of tags known by Thunderbird
-    let knownTagArray = await messenger.messages.listTags();    
-    
-    // Loop through tagz and append tag to the CSS
-    for (var currTag of knownTagArray) {
-        // Take the human readable string for the tag name and replace spaces.
-        var tagText = currTag.tag.replaceAll(' ', '-');
-        
-        // Build a color entry for the CSS of the following form (TAGCOLOR already has a leading hashtag):
-        //  .cm-tag-TAGNAME, [href="#TAGNAME"] { --tag-color: TAGCOLOR
-        var tagCss = "\n.cm-tag-" + tagText + ", [href=\"#" + tagText + "\"] { --tag-color: " + currTag.color + "}";
-        
-        // Add the line of CSS
-        cssBlock = cssBlock + tagCss;
-    }
-    elem.value = cssBlock;
-}
 
 ///////////////////////
 // Main execution path
@@ -265,8 +210,6 @@ document.getElementById('default-maxEmailSize').onclick = function() {storeDefau
 // Get the stored parameters and pass them to a function to populate fields.
 browser.storage.local.get(null).then(loadOptionsFields, onError);
 
-// Populate the special case colorCodedTagsCss field.
-setupColorCodedTagsCssField();
 
 
 
