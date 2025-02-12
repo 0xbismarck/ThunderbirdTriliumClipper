@@ -155,7 +155,7 @@
         <li><b>_MSGTAGSLIST</b> - Include <a href="https://support.mozilla.org/en-US/kb/message-tags">Email catagory tags</a> in a hashtag spaced list. See below for color coding options.</li>
         <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."</li>
         <li><b>_MSGIDURI</b> - A URI that can be clicked to open the message.</li>
-            <ul><li>For example, '[click here to open](_MSGURI)' will create a link in your note that when clicked will open the email in your client.</li></ul>
+            <ul><li>For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.</li></ul>
         <li><b>_MSGCONTENT</b> - The actual text content of the message.</li>
         </ul>
   </li>
@@ -175,7 +175,15 @@
     <button id="submit-noteFilenameTemplate">Save</button>
     <button id="default-noteFilenameTemplate">Restore Default</button>
   </form>
+  <hr>
+  <h2>Message Link Text</h2>
   
+  <form>
+    <label><b>Text to go in the link to the original message</b></label>
+    <input type="text" id="messageLinkText">
+    <button id="submit-messageLinkText">Save</button>
+    <button id="default-messageLinkText">Restore Default</button>
+  </form>
   <hr>
   <p>
   <h2>Note Content Template</h2>

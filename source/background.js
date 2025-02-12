@@ -422,7 +422,7 @@ async function clipEmail(storedParameters)
     let attachmentSaveEnabled = false;
     let htmlClippingEnabled = true;
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
-
+    let messageLinkText = ""
     // Log that we're clipping the message
     await displayStatusText("TriliumNextClipper: Clipping message.");
     
@@ -453,6 +453,7 @@ async function clipEmail(storedParameters)
             triliumdb = storedParameters["triliumdb"];
             triliumToken = storedParameters["triliumToken"];
             triliumParentNoteId = storedParameters["parentNoteId"];
+            messageLinkText = storedParameters["messageLinkText"]
 
             // Correct any parameters the won't cause fatal errors when missing
             // by giving them default values.
@@ -488,7 +489,7 @@ async function clipEmail(storedParameters)
     // Create a mail "mid:" URI with the message ID
     // TODO: Put in template subsitition so it's only processed if used
     let messageIdUri = "mid:" + message.headerMessageId;        // Create a mail "mid:" URI with the message ID
-    
+    messageIdUri = "<a href=\"" + messageIdUri + "\">" + messageLinkText + "</a>"
     // // Build the message tag list that reflects how the email was tagged.
     // // TODO: Put in a function so it's not processed if not used
     // let messageTagList = "#email";

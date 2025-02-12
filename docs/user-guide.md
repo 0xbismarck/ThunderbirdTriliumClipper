@@ -94,7 +94,7 @@ These placeholders and what is substituted in the clipped note are detailed belo
 - *_MSGTAGSLIST* - Include [Email catagory tags](https://support.mozilla.org/en-US/kb/message-tags) in a hashtag spaced list. See below for color coding options.
 - *_MSGATTACHMENTLIST* - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."
 - *_MSGIDURI* - A URI that can be clicked to open the message.
-    - For example, the text \"`[click here to open](_MSGURI)`\" will create a link in your note that when clicked will open the email in your client.
+    - For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.
 - *_MSGCONTENT* - The actual text content of the message.
     
   

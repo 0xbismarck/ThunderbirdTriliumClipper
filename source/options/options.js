@@ -39,7 +39,6 @@ defaultParameters["attachmentFolderPath"] = "ClippedEmails/_resources";
 defaultParameters["attachmentSaveEnabled"] = false;
 defaultParameters["noteFilenameTemplate"] = "Email (_MSGDATE) : _MSGSUBJECT";
 defaultParameters["noteContentTemplate"] = 
-    "Tagged: #email _MSGTAGSLIST\n" +
     "Created: _NOTEDATE, _NOTETIME\n" +
     "Subject: _MSGSUBJECT\n" +
     "Message Date: _MSGDATE, _MSGTIME\n" +
@@ -48,7 +47,7 @@ defaultParameters["noteContentTemplate"] =
     "CC: _MSGCC\n" +
     "BCC: _MSGBCC\n" +
     "Attachments: _MSGATTACHMENTLIST\n" +
-    "[Click to open message in email client](_MSGIDURI)\n\n" +
+    "_MSGIDURI\n\n" +
     "---\n\n" +
     "_MSGCONTENT";
     
@@ -63,6 +62,7 @@ defaultParameters["triliumdb"]  = "http://localhost:37840/etapi";
 defaultParameters["triliumUser"] = "etapi";
 defaultParameters["triliumToken"] = "[ETAPI Token]";
 defaultParameters["parentNoteId"] = ""
+defaultParameters["messageLinkText"] = "Click to open message in email client"
 
 // Store the data to local storage with the given key
 function parameterStore(key, value) {
@@ -240,6 +240,9 @@ document.getElementById('default-htmlClippingEnabled').onclick = function() {sto
 
 document.getElementById('submit-noteFilenameTemplate').onclick = function() {storeOption("noteFilenameTemplate"); };
 document.getElementById('default-noteFilenameTemplate').onclick = function() {storeDefault("noteFilenameTemplate"); };
+
+document.getElementById('submit-messageLinkText').onclick = function() {storeOption("messageLinkText"); };
+document.getElementById('default-messageLinkText').onclick = function() {storeDefault("messageLinkText"); };
 
 document.getElementById('submit-noteContentTemplate').onclick = function() {storeOption("noteContentTemplate"); };
 document.getElementById('default-noteContentTemplate').onclick = function() {storeDefault("noteContentTemplate"); };
