@@ -644,24 +644,31 @@ async function clipEmail(storedParameters)
     await displayStatusText("TriliumNextClipper: Sending data to TriliumNext application.");
     
     // Create new note
-    response = await fetch(triliumUrl, fetchInfo);
-    json = await response.json();
-    if (response.ok) {
-        /*{'note': {'noteId': 'ww1AZxxC0DaE', 'isProtected': False, 'title': 'aaaaa', 'type': 'text', 'mime': 'text/html', 'blobId': 'aHCJd06HhUBWJWIDePpT', 
-        'dateCreated': '2025-01-23 23:17:48.821-0500', 'dateModified': '2025-01-23 23:17:48.823-0500', 'utcDateCreated': '2025-01-24 04:17:48.822Z', 
-        'utcDateModified': '2025-01-24 04:17:48.823Z', 'parentNoteIds': ['LVA9YEQrPW0d'], 'childNoteIds': [], 'parentBranchIds': ['LVA9YEQrPW0d_ww1AZxTJ0FaF'], 
-        'childBranchIds': [], 'attributes': []}, 'branch': {'branchId': 'LVA9YEQrPW0d_ww1AZxTJ0FaF', 'noteId': 'ww1AZxTJ0FaF', 'parentNoteId': 'LVA9YEQrPW0d', 
-        'prefix': None, 'notePosition': 40, 'isExpanded': False, 'utcDateModified': '2025-01-24 04:17:48.824Z'}}*/
-        // console.log("Trilium Result: " + json.note.noteId);    
-        labelNewNote(message, json.note.noteId, triliumdb, headers);
-        updateNoteIcon(json.note.noteId, triliumdb, headers); // @TODO - updating this configurable
-        await displayStatusText("TriliumNextClipper: Message clipped.");
+    try {
+        response = await fetch(triliumUrl, fetchInfo);
+        json = await response.json();
+        if (response.ok) {
+            /*{'note': {'noteId': 'ww1AZxxC0DaE', 'isProtected': False, 'title': 'aaaaa', 'type': 'text', 'mime': 'text/html', 'blobId': 'aHCJd06HhUBWJWIDePpT',
+            'dateCreated': '2025-01-23 23:17:48.821-0500', 'dateModified': '2025-01-23 23:17:48.823-0500', 'utcDateCreated': '2025-01-24 04:17:48.822Z',
+            'utcDateModified': '2025-01-24 04:17:48.823Z', 'parentNoteIds': ['LVA9YEQrPW0d'], 'childNoteIds': [], 'parentBranchIds': ['LVA9YEQrPW0d_ww1AZxTJ0FaF'],
+            'childBranchIds': [], 'attributes': []}, 'branch': {'branchId': 'LVA9YEQrPW0d_ww1AZxTJ0FaF', 'noteId': 'ww1AZxTJ0FaF', 'parentNoteId': 'LVA9YEQrPW0d',
+            'prefix': None, 'notePosition': 40, 'isExpanded': False, 'utcDateModified': '2025-01-24 04:17:48.824Z'}}*/
+            // console.log("Trilium Result: " + json.note.noteId);
+            labelNewNote(message, json.note.noteId, triliumdb, headers);
+            updateNoteIcon(json.note.noteId, triliumdb, headers); // @TODO - updating this configurable
+            await displayStatusText("TriliumNextClipper: Message clipped.");
+        }
+        else {
+            // {'status': 400, 'code': 'PROPERTY_VALIDATION_ERROR', 'message': "Validation failed on property 'parentNoteId': Note 'LVA9YEQrPW0d' does not exist."}
+            console.log(json.message);
+            await displayAlert("TriliumNextClipper: " + json.message);
+        }
     }
-    else {
-        // {'status': 400, 'code': 'PROPERTY_VALIDATION_ERROR', 'message': "Validation failed on property 'parentNoteId': Note 'LVA9YEQrPW0d' does not exist."}
-        console.log(json.message);
-        await displayAlert("TriliumNextClipper: " + json.message);
-    }   
+    catch (TypeError)
+    {
+        console.log("Error: Make sure Trilium is open")
+        await displayAlert("Error: Please verify that TriliumNext is open.")
+    }
 }
 
 async function labelNewNote(message, noteId, triliumdb, headers ) {
