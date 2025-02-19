@@ -46,12 +46,12 @@
 
   <hr>
   
-  <h1>Message Attachments (Optional Feature)</h1>
+  <!-- <h1>Message Attachments (Optional Feature)</h1>
   <p>This optional feature allows saving files attached to an email message Obsidian.
   <p>To use this feature, set the options below and then perform the steps described in 
-  "Attachment Permissions."
+  "Attachment Permissions." -->
   
-  <h2>Attachment Options</h2>
+  <!-- <h2>Attachment Options</h2>
   <p>Enable saving email attachments with the option below.
   
   <form> 
@@ -60,10 +60,10 @@
     <br>
     <button id="submit-attachmentSaveEnabled">Save</button>
     <button id="default-attachmentSaveEnabled">Restore Default</button>
-  </form>  
+  </form>   -->
   
   
-  <h2>Attachment Save Folder</h2>
+  <!-- <h2>Attachment Save Folder</h2>
   This parameter tells ObsidianClipper the location within the
   vault where you will place clipped emails, relative to the Obsidian vault's root directory.
   For example, setting this parameter to 'business/important emails/_resources' would place
@@ -79,8 +79,8 @@
     <button id="submit-attachmentFolderPath">Save</button>
     <button id="default-attachmentFolderPath">Restore Default</button>
   </form>
-  
-  <h2>Attachment Permissions</h2>
+   -->
+  <!-- <h2>Attachment Permissions</h2>
   In order to save the attachment files from emails, you will need to set the default save location
   for the Thunderbird application. Do that by following the steps below.
   <ul>
@@ -102,7 +102,7 @@
     <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">online User Guide</a>.
   
   <hr>
-  
+   -->
   <h1>HTML Content Clipping</h1>
   Emails can support HTML content. When an email contains HTML content, usually a plain text version of the message is also sent
   so that email clients capable of only reading plain text can also read the message. By default, ObsidianClipper will clip
@@ -152,7 +152,7 @@
                 See the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">User Guide</a> for an example.</li>
             </ul>
         <li><b>_MSGAUTHOR</b> - The message author.</li>
-        <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."</li>
+        <!-- <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."</li> -->
         <li><b>_MSGIDURI</b> - A URI that can be clicked to open the message.</li>
             <ul><li>For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.</li></ul>
         <li><b>_MSGCONTENT</b> - The actual text content of the message.</li>

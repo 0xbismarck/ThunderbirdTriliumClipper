@@ -46,7 +46,7 @@ defaultParameters["noteContentTemplate"] =
     "Recipients: _MSGRECIPENTS\n" +
     "CC: _MSGCC\n" +
     "BCC: _MSGBCC\n" +
-    "Attachments: _MSGATTACHMENTLIST\n" +
+    // "Attachments: _MSGATTACHMENTLIST\n" +
     "_MSGIDURI\n\n" +
     "---\n\n" +
     "_MSGCONTENT";
@@ -174,11 +174,11 @@ document.getElementById('default-parentNoteId').onclick = function() {storeDefau
 
 
 // As a radio button array, attachment save mode submits/defaults all three buttons at once.
-document.getElementById('submit-attachmentSaveEnabled').onclick = function() {storeOption("attachmentSaveEnabled"); };    
-document.getElementById('default-attachmentSaveEnabled').onclick = function() {storeDefault("attachmentSaveEnabled"); };
+// document.getElementById('submit-attachmentSaveEnabled').onclick = function() {storeOption("attachmentSaveEnabled"); };    
+// document.getElementById('default-attachmentSaveEnabled').onclick = function() {storeDefault("attachmentSaveEnabled"); };
 
-document.getElementById('submit-attachmentFolderPath').onclick = function() {storeOption("attachmentFolderPath"); };
-document.getElementById('default-attachmentFolderPath').onclick = function() {storeDefault("attachmentFolderPath"); };
+// document.getElementById('submit-attachmentFolderPath').onclick = function() {storeOption("attachmentFolderPath"); };
+// document.getElementById('default-attachmentFolderPath').onclick = function() {storeDefault("attachmentFolderPath"); };
 
 document.getElementById('submit-htmlClippingEnabled').onclick = function() {storeOption("htmlClippingEnabled"); };
 document.getElementById('default-htmlClippingEnabled').onclick = function() {storeDefault("htmlClippingEnabled"); };
