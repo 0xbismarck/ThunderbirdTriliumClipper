@@ -11,46 +11,40 @@ In addition to the information below, there is a [User Guide](./docs/user-guide.
 - You will first need to have the TriliumNext notetaking app on your local platform as well as the Thunderbird email client.
   - You can download Thunderbird for free [here](https://www.thunderbird.net/en-US/download/).
   - You can download TriliumNext for free [here](https://github.com/TriliumNext/Notes/releases).
-  - You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
+  <!--- You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
     <!-- - By searching for "ObsdianClipper" in the Add-on mMnager (*Settings->Add-ons Manager*).
     - Or by downloading a file from the [Thunderbird Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), clicking the "Download Now" button to get an XPI file, and installing that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*). -->
+  - For now Trilium Clipper is developmental and not available in the Thunderbird store. To install this version of the extension, download the source code from this repository and then follow the instructions here - https://developer.thunderbird.net/add-ons/hello-world-add-on#installing
 - After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
-  - *Obsidian Vault Name* - is the name of the vault you created to keep your notes in when you set up Obsidian.
-  - *Note Folder Path* - an optional parameter that allows the user to specifiy a location within the
-  vault to place clipped emails. By default, this will be the folder "ClippedEmails.". If this parameter is left blank, new notes in Obsidian will appear
-  in the location indicated in 'Settings->Files & Links->Default location for new notes'.
-  - *Note Filename and Content Templates* - allow you to specify how your clipped emails will be formatted and how the files will be named.
-
+- 
 ![Here is what the *Options* tab looks like](docs/OptionsTab.png)
 
 
 - After you've installed and configured the add-on, you're ready to clip emails!
 
 ## Usage
-To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "Obsidian" button and your Obsidian application will launch and load your vault and your email will be clipped into TriliumNext. 
+To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. 
 
 ![Click on the Trilium Clipper icon when viewing a message to save it into TriliumNext.](docs/MessagePane.png)
 
-Once your email has been clipped, it will look like the screenshot below. By default, your note will be in the top level "ClippedEmails" folder (Obsidian will create the folder if needed), but you can change it with the *Note Folder Path* option mentioned above.
+Once your email has been clipped, it will look like the screenshot below. By default, your note will be placed under the note with the ParentNoteId that was configured in the Options.
 
-If you only wish to clip a portion of an email's text, select the text before pressing the Obsidian icon.
+If you only wish to clip a portion of an email's text, select the text before pressing the TriliumNext icon.
 
 
-![This is what a clipped email message looks like in Obsidian. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](docs/ClippedNote.png)
+![This is what a clipped email message looks like in TriliumNext. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](docs/ClippedNote.png)
 
 
 ## Getting More Help
-If ObsidianClipper is not properly working, please take a moment to reread the instructions and reinstall the add-on. If the problem is still happening, please check out the 
+If TriliumClipper is not properly working, please take a moment to reread the instructions and reinstall the add-on. If the problem is still happening, please check out the 
 [Troubleshooting section of the User Guide](./docs/user-guide.md#Troubleshooting).
 
 ## Limitations & Future Features
-At this time, ObsidianClipper will only clip the text portion of an email and not HTML content (i.e. embedded images, bold or italics, etc). If you're a user who is interested in this or other features, please let me know via the *Feedback* instructions below. Otherwise I will assume there is no demand for them.
+At this time, TriliumClipper will only clip the text portion of an email and not HTML content (i.e. embedded images, bold or italics, etc). If you're a user who is interested in this or other features, please let me know via the *Feedback* instructions below. Otherwise I will assume there is no demand for them.
 
 ## Questions? Feedback?
-ObsidianClipper is still a work in progress. If you have any questions or want to give me feedback, please reach out to to the team
-by [filing an issue on GitHub](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues), via the "Support Email" link on the
-[Thunderbird add-on page](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), 
-or via the contact page on my personal website, [KevinHaw.com](http://www.kevinhaw.com).
+TriliumClipper is still a work in progress. If you have any questions or want to give me feedback, please reach out to to the team
+by [filing an issue on GitHub](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues).
 
 If sending screenshots for a bug report or via email, make sure to blur or mark out any sensitive information since the images may be accessible to the wider internet.
 
