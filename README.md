@@ -17,7 +17,8 @@ In addition to the information below, there is a [User Guide](./docs/user-guide.
   - For now Trilium Clipper is developmental and not available in the Thunderbird store. To install this version of the extension, download the source code from this repository and then follow the instructions here - https://developer.thunderbird.net/add-ons/hello-world-add-on#installing
 - After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
 - 
-![Here is what the *Options* tab looks like](docs/OptionsTab.png)
+<!-- ![Here is what the *Options* tab looks like](docs/OptionsTab.png) 
+@todo - add this back in later-->
 
 
 - After you've installed and configured the add-on, you're ready to clip emails!
