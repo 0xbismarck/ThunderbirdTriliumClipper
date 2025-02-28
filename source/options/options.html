@@ -91,24 +91,24 @@
     <li>Click on the 'Save Files To' option and then click on the 'Browse' button.</li>
     <li>Navigate to the folder for saving attachments recorded above. In the example above, this would be the 'business/important emails/_resources' folder.</li>
     <li>Alternately, if you regularly save attachment files to other locations in the course of your normal workflow and do not want those
-        other files saved into your Obsidian vault, you could instead click the 
+        other files saved into your Trilium vault, you could instead click the 
         'Always ask me where to save files' option. In doing so, though, you will need to manually navigate to the Attachment Save Folder
         whenever clipping an email with any attachments.</li>
   </ul>
   Note that it is important to correctly set both Thunderbird's file save location and the path specified in the 'Attachment Save Folder'
   section above. Incorrectly setting them will cause the attachment links in the _MSGATTACHMENTLIST_ field to point at the
   wrong location.
-  <p>For more details and a detailed guide to setting up attachmetns for ObsidianClipper, please visit the 
-    <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">online User Guide</a>.
+  <p>For more details and a detailed guide to setting up attachmetns for TriliumClipper, please visit the 
+    <a href="https://github.com/KNHaw/ThunderbirdTriliumClipper/blob/main/docs/user-guide.md">online User Guide</a>.
   
   <hr>
    -->
   <h1>HTML Content Clipping</h1>
   Emails can support HTML content. When an email contains HTML content, usually a plain text version of the message is also sent
-  so that email clients capable of only reading plain text can also read the message. By default, ObsidianClipper will clip
-  the HTML content when it is available instead of the plain text, translating it to Markdown format for Obsidian. This behavior
+  so that email clients capable of only reading plain text can also read the message. By default, TriiliumClipper will clip
+  the HTML content when it is available instead of the plain text, translating it to Markdown format for Trilium. This behavior
   can be disabled with the control below so that only the plain text message is clipped.
-  <p>One of the features of HTML email is the ability to embed graphical images within the message. ObsidianClipper needs the optional
+  <p>One of the features of HTML email is the ability to embed graphical images within the message. TriiliumClipper needs the optional
   <i>Message Attachments</i> feature described above be enabled and the <i>Attachments folder</i> be set up to support embedded images.
   Other HTML content (character formatting, images hosted on the internet, HTML lists, etc) is still supported even if
   this is not the case.
@@ -147,12 +147,12 @@
         <li><b>_MSGRECIPENTS</b> - List of all message recipients (in the email "to" field).</li>
             <ul>
             <li>Similarly, <b>_MSGCC</b> will list the addresses from the "cc" field and <b>_MSGBCC</b> will list the addresses from "bcc"</li>
-            <li>Additionally, the <b>_MSGRECIPENTS_YAML</b>, <b>_MSGCC_YAML</b>, and <b>_MSGBCC_YAML</b> placeholders provide the same data in a 
-                format that can be used in Obsidian <a href-"https://help.obsidian.md/Editing+and+formatting/Properties">frontmatter properties.</a>
-                See the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">User Guide</a> for an example.</li>
+            <!--<li>Additionally, the <b>_MSGRECIPENTS_YAML</b>, <b>_MSGCC_YAML</b>, and <b>_MSGBCC_YAML</b> placeholders provide the same data in a 
+                format that can be used in Trilium <a href-"https://help.obsidian.md/Editing+and+formatting/Properties">frontmatter properties.</a>
+                See the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">User Guide</a> for an example.</li>-->
             </ul>
         <li><b>_MSGAUTHOR</b> - The message author.</li>
-        <!-- <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."</li> -->
+        <!-- <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to TriliumNext. If no message attachments were saved, returns the string "none."</li> -->
         <li><b>_MSGIDURI</b> - A URI that can be clicked to open the message.</li>
             <ul><li>For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.</li></ul>
         <li><b>_MSGCONTENT</b> - The actual text content of the message.</li>
@@ -203,7 +203,7 @@
   based on your operating system or personal preferences. Select from
   the below options to customize how filenames for notes should be
   formatted.
-  <p>None of this applies to the actual content of a note, just the name of the note in the Obsidian vault.
+  <p>None of this applies to the actual content of a note, just the name of the note.
   
   <h2>Additional Disallowed Characters</h2>
   <form>
@@ -264,7 +264,7 @@
   <hr>
   <h1>Maximum Clipped Email Note Size</h1>
   <p>To conserve space in your vault or to resolve certain technical problems, you may want
-  to limit the size of the emails clipped to Obsidian. If you set a limit below, Obsidian
+  to limit the size of the emails clipped to TriliumNext. If you set a limit below, Trilium
   Clipper will crop an email to the size you choose. To activate this feature, enter
   the maximum email size. A nonnumeric value (such as the text "disabled") disables this feature.
   <form>
@@ -281,9 +281,9 @@
   
   <h1>Getting Help</h1>
   <p>If you are experiencing a problem with the add-on, please visit the 
-  add-on <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper">homepage</a>
-  and check the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md#Troubleshooting">Troubleshooting section of the User Guide</a>.
-  If this does not help, please let the development team know about your problem by <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/issues">filing an issue about it</a>.
+  add-on <a href="https://github.com/0xbismarck/ThunderbirdTriliumClipper">homepage</a>
+  and check the <a href="https://github.com/0xbismarck/ThunderbirdTriliumClipper/blob/main/docs/user-guide.md#Troubleshooting">Troubleshooting section of the User Guide</a>.
+  If this does not help, please let the development team know about your problem by <a href="https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues">filing an issue about it</a>.
   
   
   <font color="white">GNU Terry Pratchett</font> <!-- If you know what this means, then you know what this means. -->
