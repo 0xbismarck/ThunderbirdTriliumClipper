@@ -52,11 +52,7 @@ defaultParameters["noteContentTemplate"] =
     "---\n\n" +
     "_MSGCONTENT";
     
-defaultParameters["unicodeCharSub"] = true;
 defaultParameters["htmlClippingEnabled"] = true;
-defaultParameters["subSpacesWithUnderscores"] = false;
-defaultParameters["additionalDisallowedChars"] = "[]#^";
-defaultParameters["noteNameReplaceChar"] = "-";
 defaultParameters["maxEmailSize"] = "Disabled";
 defaultParameters["triliumdb"]  = "http://localhost:37840/etapi";
 defaultParameters["triliumUser"] = "etapi";
@@ -192,18 +188,6 @@ document.getElementById('default-messageLinkText').onclick = function() {storeDe
 
 document.getElementById('submit-noteContentTemplate').onclick = function() {storeOption("noteContentTemplate"); };
 document.getElementById('default-noteContentTemplate').onclick = function() {storeDefault("noteContentTemplate"); };
-
-document.getElementById('submit-unicodeCharSub').onclick = function() {storeOption("unicodeCharSub"); };
-document.getElementById('default-unicodeCharSub').onclick = function() {storeDefault("unicodeCharSub"); };
-
-document.getElementById('submit-subSpacesWithUnderscores').onclick = function() {storeOption("subSpacesWithUnderscores"); };
-document.getElementById('default-subSpacesWithUnderscores').onclick = function() {storeDefault("subSpacesWithUnderscores"); };
-
-document.getElementById('submit-additionalDisallowedChars').onclick = function() {storeOption("additionalDisallowedChars"); };
-document.getElementById('default-additionalDisallowedChars').onclick = function() {storeDefault("additionalDisallowedChars"); };
-
-document.getElementById('submit-noteNameReplaceChar').onclick = function() {storeOption("noteNameReplaceChar"); };
-document.getElementById('default-noteNameReplaceChar').onclick = function() {storeDefault("noteNameReplaceChar"); };
 
 document.getElementById('submit-maxEmailSize').onclick = function() {storeOption("maxEmailSize"); };
 document.getElementById('default-maxEmailSize').onclick = function() {storeDefault("maxEmailSize"); };

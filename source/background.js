@@ -273,43 +273,6 @@ function replaceUnicodeChar(c, defaultReplace="") {
     return newChar;
 }
 
-// Function to change characters that are illegal in Obsidian file names to something palatable
-function correctObsidianFilename(noteFileName, useUnicodeChars=true, subSpacesWithUnderscores=false, additionalDisallowedChars='', noteNameReplaceChar='-')
-{
-    // Replace any whitespace in the replacement character with a null string so it deletes instead.
-    noteNameReplaceChar = noteNameReplaceChar.replaceAll(/\s/g, "");
-    
-    // Start with a list of reserved characters to replace. Because backslashes normally escape special charatcers, it's
-    // necesarry to escape them. Use four backslashes on this line to get two in searchString. Those two escape to have
-    // the RegExp() call below search on a single backslash 
-    let searchString = '|\\\\/"<>*:?';
-    
-    // Add the user provided list of reserved characters. First remove backslashes, which cause chaos and are 
-    // already handled above. Then escape every character in case something has special meaning in regular expression syntax.
-    additionalDisallowedChars.replaceAll(/\\/g, '');        // Remove backslashes
-    additionalDisallowedChars.split('').forEach( c => {     // Add escaped chars to list
-        searchString = searchString + '\\' + c;
-    });
-    
-    // Either replace or strip reserved characters. Begin with any unicode replacement user requested.
-    let searchRegExp = new RegExp("[" + searchString + "]", "g");
-    if(true == useUnicodeChars) {
-        noteFileName = noteFileName.replace(searchRegExp, m=>replaceUnicodeChar(m, noteNameReplaceChar) );
-    }
-    else {
-        // Use normal character sustitution on requested characters.
-        noteFileName = noteFileName.replace(searchRegExp, noteNameReplaceChar);
-    }
-    
-    // Finally, sub spaces with underscores if requested
-    if(true == subSpacesWithUnderscores) {
-        noteFileName = noteFileName.replaceAll(' ', '_');
-    }
-    
-    return noteFileName;
-}
-
-
 
 // Function to extract text from a message object (specifically, a messagePart object),
 // then recurse through any part[] arrays beneath that for more text.
@@ -416,9 +379,6 @@ async function clipEmail(storedParameters)
     let useUnicodeInFilenames = false;
     let noteTitleTemplate = "";
     let noteTemplate = "";
-    let subSpacesWithUnderscores = false;
-    let additionalDisallowedChars = "";
-    let noteNameReplaceChar = "-";
     let attachmentFolderPath = "";
     let attachmentSaveEnabled = false;
     let htmlClippingEnabled = true;
@@ -441,12 +401,8 @@ async function clipEmail(storedParameters)
             return;
         } else {
             // Load parameters from storage
-            useUnicodeInFilenames = storedParameters["unicodeCharSub"];
             noteTitleTemplate = storedParameters["noteFilenameTemplate"];
             noteTemplate = storedParameters["noteContentTemplate"];
-            subSpacesWithUnderscores = storedParameters["subSpacesWithUnderscores"];
-            additionalDisallowedChars = storedParameters["additionalDisallowedChars"]; 
-            noteNameReplaceChar = storedParameters["noteNameReplaceChar"];
             attachmentFolderPath = storedParameters["attachmentFolderPath"];
             attachmentSaveEnabled = storedParameters["attachmentSaveEnabled"];
             maxEmailSize = storedParameters["maxEmailSize"];
@@ -458,10 +414,6 @@ async function clipEmail(storedParameters)
 
             // Correct any parameters the won't cause fatal errors when missing
             // by giving them default values.
-            if(undefined == useUnicodeInFilenames) {useUnicodeInFilenames = true;}
-            if(undefined == subSpacesWithUnderscores) {subSpacesWithUnderscores = true;}
-            if(undefined == additionalDisallowedChars) {additionalDisallowedChars = "";}
-            if(undefined == noteNameReplaceChar) {noteNameReplaceChar = "-";}
             if(undefined == attachmentFolderPath) {attachmentFolderPath = "";}
             
             // Correct any parameters requiring additional processing
@@ -609,8 +561,6 @@ async function clipEmail(storedParameters)
         return templateMap[matched];
     });
 
-    // Now, replace characters that are not supported in Obsidian filenames.
-    noteSubject = correctObsidianFilename(noteSubject, useUnicodeInFilenames, subSpacesWithUnderscores, additionalDisallowedChars, noteNameReplaceChar);
 
     console.log(`background.js: Note subject: \"${noteSubject}\"`);
     console.log("background.js: Note content:\n" + noteContent);
