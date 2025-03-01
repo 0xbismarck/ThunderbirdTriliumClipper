@@ -376,7 +376,6 @@ async function clipEmail(storedParameters)
     let triliumdb = "";
     let triliumToken = "";
     let triliumParentNoteId = ""
-    let useUnicodeInFilenames = false;
     let noteTitleTemplate = "";
     let noteTemplate = "";
     let attachmentFolderPath = "";
