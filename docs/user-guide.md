@@ -95,7 +95,7 @@ If that does not work, please try some of the steps below.
 Before you use this extension to send e-mails to TriliumNotes, remember to have TriliumNotes open on your computer.
 
 ### TriliumNext Parent Note Does Exist.
-If you clip an email and see a "TriliumNextClipper: Validation failed on property 'parentNoteId': Note 'XL1NKSAV3HYRUL3' does not exist." error, the *ParentNoteId* field is not set properly. If you are unsure of the value to set, scroll up to #Add-on-Options and review the instructions.
+If you clip an email and see a "TriliumNextClipper: Validation failed on property 'parentNoteId': Note 'XL1NKSAV3H1RUL3' does not exist." error, the *ParentNoteId* field is not set properly. If you are unsure of the value to set, scroll up to #Add-on-Options and review the instructions.
 
 
 <!-- ### Unable to Save Email Attachments
