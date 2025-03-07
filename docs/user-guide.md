@@ -1,6 +1,7 @@
-# ThunderbirdObsidianClipper User Guide
-ObsidianClipper is an add-on for the Thunderbird email client that lets a user clip messages to the Obsidian notetaking application. You can find out more at the [Thunderbird add-on page](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/)
-or [at the project GitHub page](https://github.com/KNHaw/ThunderbirdObsidianClipper/).
+This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/ThunderbirdObsidianClipper). The code is experimental at this point in time and is being developed. As is, the extension will send e-mail to TriliumNext.
+
+# ThunderbirdTriliumClipper User Guide
+TriliumClipper is an add-on for the Thunderbird email client that lets a user clip messages to the TriliumNext notetaking application. You can find out more at the <!--[Thunderbird add-on page](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/) or [at the -->  [project GitHub page](https://github.com/0xbismarck/ThunderbirdTriliumClipper/).
 
 
 ## Table of Contents
@@ -8,51 +9,46 @@ or [at the project GitHub page](https://github.com/KNHaw/ThunderbirdObsidianClip
 - [Usage](#Usage)
 - [Add-on Options](#Add-on-Options)
 - [Placeholders](#Placeholders)
-- [Obsidian Frontmatter Properties](#Obsidian-Frontmatter-Properties)
 - [Colored Message Tags (Optional Feature)](#Colored-Message-Tags-Optional-Feature)
 - [Troubleshooting](#Troubleshooting)
 - [Questions? Feedback?](#Questions-Feedback)
 
 ## Installation
-- To use ObsidianClipper, you will first need to have the Obsidian notetaking app on your local platform as well as the Thunderbird email client.
+- You will first need to have the TriliumNext notetaking app on your local platform as well as the Thunderbird email client.
   - You can download Thunderbird for free [here](https://www.thunderbird.net/en-US/download/).
-  - You can download Obsidian for free [here](https://obsidian.md/download).
-  - You can install the *Obsidian Clipper* add-on into Thunderbird in two ways:
-    - By searching for "ObsdianClipper" in the Add-on mMnager (*Settings->Add-ons Manager*).
-    - Or by downloading a file from the [Thunderbird Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), clicking the "Download Now" button to get an XPI file, and installing that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*).
-- After installing ObsidianClipper to your Thunderbird client, select the Options tab (*Settings->add-ons Manager->Obsidian Clipper->Options tab*) and configure the add-on to work with Obsidian on your machine.
-  - *Obsidian Vault Name* - is the name of the vault you created to keep your notes in when you set up Obsidian.
-  - *Note Folder Path* - an optional parameter that allows the user to specifiy a location within the
-  vault to place clipped emails By default, this will be the folder "ClippedEmails.". If this parameter is left blank, new notes in Obsidian will appear
-  in the location indicated in 'Settings->Files & Links->Default location for new notes'.
-  - *Note Filename and Content Templates* - allow you to specify how your clipped emails will be formatted and how the files will be named.
-
-![Here is what the *Options* tab looks like](./OptionsTab.png)
+  - You can download TriliumNext for free [here](https://github.com/TriliumNext/Notes/releases).
+  <!--- You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
+    <!-- - By searching for "ObsdianClipper" in the Add-on mMnager (*Settings->Add-ons Manager*).
+    - Or by downloading a file from the [Thunderbird Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), clicking the "Download Now" button to get an XPI file, and installing that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*). -->
+  - For now Trilium Clipper is developmental and not available in the Thunderbird store. To install this version of the extension, download the source code from this repository and then follow the instructions here - https://developer.thunderbird.net/add-ons/hello-world-add-on#installing
+- After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
+- 
+<!-- ![Here is what the *Options* tab looks like](docs/OptionsTab.png) 
+@todo - add this back in later-->
 
 
 - After you've installed and configured the add-on, you're ready to clip emails!
 
 ## Usage
-To use ObsidianClipper, just select an email and look for the "Obsidian" icon on the header (where you will also find the Reply and Forward buttons). Press the "Obsidian" button and your Obsidian application will launch and load your vault and your email will be clipped into Obsidian. If you only want to clip a portion of the email, select the desired text before clicking on the Obsidian icon.
+To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. (Note, TriliumNext needs to be open before you send an e-mail)
 
-![Click on the Obsidian Clipper icon when viewing a message to save it into Obsidian.](./MessagePane.png)
+![Click on the Trilium Clipper icon when viewing a message to save it into TriliumNext.](./MessagePane.png)
 
-Once your email has been clipped, it will look like the screenshot below. By default, your note will be in the top level "ClippedEmails" folder (Obsidian will create the folder if needed), but you can change it with the *Note Folder Path* option mentioned above.
+Once your email has been clipped, it will look like the screenshot below. By default, your note will be placed under the note with the ParentNoteId that was configured in the Options.
 
+If you only wish to clip a portion of an email's text, select the text before pressing the TriliumNext icon.
 
-![This is what a clipped email message looks like in Obsidian. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](./ClippedNote.png)
+![This is what a clipped email message looks like in TriliumNext. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](./ClippedNote.png)
 
 ## Add-on Options
 There are a number of options that a user can use to configure the clipper add-on. These can be found on the Options tab for the add-on.
 
-- *Obsidian Vault Name* - The vault is a folder on your local file system where Obsidian stores your notes. 
-If you are unsure of your vault name or have not set up a vault on your local machine yet, go to the 
-[Obsidian Help](https://help.obsidian.md) page for details.
-- *Note Folder Path (Optional Parameter)* - Allows the user to specifiy a location within the
-  vault to place clipped emails. If this parameter is left blank, new notes in Obsidian will appear
-  in the location indicated in 'Settings->Files & Links->Default location for new notes'.
-  By default, this is usually the most recent folder in use in the Obsidian app.
-- *Message Attachments (Optional Feature)* - To save email attachments with clipped emails, do the following:
+- *Trilium URL* - The Trilium URL is the location where TriliumNotes sends data for the creation of a new note. By default, when TriliumNext is installed on your local machine, it will receive the note on the localhost:port combination below. Otherwise you need to specifiy where Thunderbird needs to send data.
+- *ETAPI Token* - TriliumNext uses an authentication token to confirm that Thunderbird has permission to create notes. To generate an ETAPI token, you need to open TriliumNext and click on the TriliumNext icon in the upper left corner. Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it in this field.
+- *ParentNoteId* - Thunderbird needs to know where in TriliumNext the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
+![NoteId](./noteID.png)
+
+<!--- *Message Attachments (Optional Feature)* - To save email attachments with clipped emails, do the following:
     - Set the checkbox labeled "Enable saving of email attachments" and save the setting. Because the configuration steps
     below need to be run before attachments can be saved, ObsidianClipper requires this manual step and will not
     by default save attachments.
@@ -63,13 +59,11 @@ If you are unsure of your vault name or have not set up a vault on your local ma
     inside your vault. This value is what sets the path to attachments in the _MSGATTACHMENTLIST template, below.
     If not properly set your clipped email will not point to the clipped attachments.
     - ObsidianClipper can't change the default location to save files like attachments, so 
-    read the section "Attachment Permissions" carefully to set the path for saving files. 
+    read the section "Attachment Permissions" carefully to set the path for saving files. -->
 - *Note Filename and Content Templates* - These two fields allow a user to specify how notes clipped from emails are named and how 
   data is saved in Obsidian by use of placeholders in the text. See the Options tab of the add-on for a brief rundown of the
   different placeholder fields or the [Placeholders](#Placeholders) section of this guide for the definitive list of
   supported placeholders.
-- *Filename Correction and Disallowed Characters* - these fields detail how the clipper should process characters that might be disallowed by
-the Obsidian app or your computer's filesystem.
 
 
 ## Placeholders
@@ -86,84 +80,30 @@ These placeholders and what is substituted in the clipped note are detailed belo
 - *_MSGSUBJECT* - The message subject.
 - *_MSGRECIPENTS* - List of all message recipients (in the email "to" field).
     - Similarly, *_MSGCC* will list the addresses from the "cc" field and *_MSGBCC* will list the addresses from "bcc"
-    - Additionally, the *_MSGRECIPENTS_YAML*, *_MSGCC_YAML*, and *_MSGBCC_YAML* placeholders provide the same data in a 
-        format that can be used in Obsidian [frontmatter properties](https://help.obsidian.md/Editing+and+formatting/Properties).
-        See the [Obsidian Frontmatter Properties](#Obsidian-Frontmatter-Properties) section below for an example.
 - *_MSGAUTHOR* - The message author.
-- *_MSGATTACHMENTLIST* - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."
+<!--- *_MSGATTACHMENTLIST* - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."-->
 - *_MSGIDURI* - A URI that can be clicked to open the message.
     - For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.
 - *_MSGCONTENT* - The actual text content of the message.
     
-  
-## Obsidian Frontmatter Properties
-It is possible set the *Note Content Template* field to embed Obsidian [frontmatter properties](https://help.obsidian.md/Editing+and+formatting/Properties) into a clipped
-note by inserting a label and content between two \"`---`\" markdown lines. These allow the Obsidian database to be searched in a more efficient and powerful way.
-
-The *_MSGRECIPENTS_YAML*, *_MSGCC_YAML*, and *_MSGBCC_YAML* placeholders provide lists of data that are formatted specifically to support this feature.
-
-Should you choose to use these features of Obsidian, here is a sample YAML header you may want to place at the top of your Note Content Template:
-
-```
----
-Note Created: _NOTEDATE, _NOTETIME
-Message Subject: _MSGSUBJECT
-Message Date: _MSGDATE, _MSGTIME
-Message Author: _MSGAUTHOR
-Message Recipients: _MSGRECIPENTS_YAML
-CC: _MSGCC_YAML
-BCC: _MSGBCC_YAML
----
-```
-
 
 ## Troubleshooting
-If ObsidianClipper is not working for you, please take a moment to reread the instructions and reinstall the add-on. You might also consider reinstalling Obsidian on your computer as well.
+If TriliumClipper is not working for you, please take a moment to reread the instructions and reinstall the add-on. You might also consider making sure both Thunderbird and TriumiumNext are both properly closed via the task manager. 
 
 If that does not work, please try some of the steps below.
 
-### Obsidian Does Not open
-If you clip a note and Obsidian does not open, it's possible you are having a problem with the Obsidian URI schema. The [Obsidian website](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI) does
-a good job of explaining it, but the important thing to understand is that ObsidianClipper uses links of the form `obsidian://<some stuff>` in order to write notes to Obsidian.
-A good way to test this is to open a web browser on your machine, type in `obsidian://open`, and press return. You're supposed to get a prompt asking you 
-if you want to open the link with Obsidian as seen below.
+Before you use this extension to send e-mails to TriliumNotes, remember to have TriliumNotes open on your computer.
 
-![Testing the Obsidian URI from a browser](./ObsidianUriTest.png)
+### TriliumNext Parent Note Does Exist.
+If you clip an email and see a "TriliumNextClipper: Validation failed on property 'parentNoteId': Note 'XL1NKSAV3HYRUL3' does not exist." error, the *ParentNoteId* field is not set properly. If you are unsure of the value to set, scroll up to #Add-on-Options and review the instructions.
 
-If you do not see a prompt like the one above then the Obsidian URI sheme is not working on your machine. If this is occurring,
-please try one of the following. 
 
-- In Linux, it has been seen that 
-[using AppImage to install Obsidian](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues/2) can cause a problem. If your Obsidian
-installation was via AppImage, try uninstalling it and reinstalling it with Deb.
-    - Thanks to [sevadah](https://github.com/sevadah) and [Massimo Bianchetto](https://github.com/mbianchetto) for helping out with this issue!
-- The [Obsdian website has a procedure for registering the Obsidian URI](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI#Register+Obsidian+URI). 
-You may wish to give that a try as well.
-- There is documentation claiming that Linux requires a special setup procedure such as the one 
-[here](https://amir.rachum.com/obsidian-uri-linux/) (note that the development team has not tried this out - please let us know how it works
-via the feedback links below).
-- If you are having problems in Windows or MacIntosh, please let us know and we can try to fix the issue. 
-
-Similarly, if you resolve this issue on your own 
-please reach out to our team so we can post a solution here for future users.
-
-### Obsidian Vault Problems
-If you clip an email and see a "Vault Not Found" error, the *Obsidian Vault Name* field is not set properly. If you are unsure of your 
-vault name or have not set up a vault on your local machine yet, go to the [Obsidian Help](https://help.obsidian.md) page for details.
-
-### Unable to Save Email Attachments
+<!-- ### Unable to Save Email Attachments
 The attachment clipping feature was added in ObsidianClipper version v4.1 in July of 2024. It is unclear what, if any
 problems that users might encounter using this feature. If you have a problem, please 
 [file an issue on GitHub](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues) so the development team can assist you and 
-update this User Guide to refelct the solutions that were found.
+update this User Guide to refelct the solutions that were found. -->
 
-### HTML Mail and Blank Note Content
-There is currently a [limitation](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues/13) that HTML mail 
-(those with pictures or links or text formatting like bold or italic) may not clip correctly. If your selected emails 
-are HMTL, this could be happening. To rule this problem out, create a simple one line test email with plain text ("Hello, world!"), 
-send it to yourself, and see if it clips correctly.
-
-The current plan is to support HTML email at some point in the second half of 2024. Please watch the issue link above for status.
 
 ### Note Content Corrupted or Missing
 If you do not see the expected content in a note that has been clipped, look at the *Note Content Template* field in the options menu
@@ -182,7 +122,7 @@ From the Settings menu, select "Add On manager." Then click on the gear tab ther
 ![Step 1 of capturing a debug log](./debuglog_step1.png)
 
 #### Capturing a Debug Log - Step 2
-From the Debug tab, scroll down to Obsidian Clipper and click the "Inspect" button.
+From the Debug tab, scroll down to Trilium Clipper and click the "Inspect" button.
 
 ![Step 2 of capturing a debug log](./debuglog_step2.png)
 
@@ -196,11 +136,9 @@ This will put the log into the clipboard, which you can then put in the notepad 
 
 
 ## Questions? Feedback?
-ObsidianClipper is still a work in progress. If you have any questions or want to give me feedback, please reach out to to the team
-by [filing an issue on GitHub](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues), via the "Support Email" link on the
-[Thunderbird add-on page](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), 
-or via the contact page on my personal website, [KevinHaw.com](http://www.kevinhaw.com).
+TriliumClipper is still a work in progress. If you have any questions or want to give me feedback, please reach out to to the team
+by [filing an issue on GitHub](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues).
 
-If sending screenshots for a bug report or via email, make sure to blur or mark out any sensitive information such as email addresses since the images may be accessible to the wider internet.
+If sending screenshots for a bug report or via email, make sure to blur or mark out any sensitive information since the images may be accessible to the wider internet.
 
 I hope this add-on proves useful to you.

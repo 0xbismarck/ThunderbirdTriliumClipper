@@ -24,7 +24,7 @@ In addition to the information below, there is a [User Guide](./docs/user-guide.
 - After you've installed and configured the add-on, you're ready to clip emails!
 
 ## Usage
-To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. 
+To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. (Note, TriliumNext needs to be open before you send an e-mail)
 
 ![Click on the Trilium Clipper icon when viewing a message to save it into TriliumNext.](docs/MessagePane.png)
 
