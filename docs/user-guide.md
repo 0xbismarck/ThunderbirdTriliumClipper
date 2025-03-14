@@ -114,6 +114,13 @@ and make sure that the *_MSGCONTENT* placeholder is present. If is isn't, the bo
 If this happens, insert the *_MSGCONTENT* placeholder into the *Note Content Template* field and save it 
 or use the "Restore Default" button to go back to a known, good baseline.
 
+### TriliumNext Button Missing
+There is a [known issue](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues/2) when [Thunderbird Conversations](https://addons.thunderbird.net/en-US/thunderbird/addon/gmail-conversation-view/) is installed and enabled. The issue is currently being investigated. For the moment there are two options for users that experiance this issue:
+- Use the classic reader option
+- Disable the Conversations add-on
+
+If the button is missing and you don't have the add-on installed, try disabling any other add-on you have installed until the button reappears. Once you identify which add-on causes a conflict with TriliumNext, please submit a [bug report](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues) with information about what add-on is causing an issue, a link to the add-on page, your Thunderbird version, and what operating system you are using.
+
 ### Capturing a Debug Log
 If you have tried the above and have not fixed your problem, you should capture a debug log and send it to the development team via the feedback links below.
 Just be sure to remove any sensitive information such as email addresses before sending in debug data.
