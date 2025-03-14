@@ -12,18 +12,21 @@ You will first need to have the TriliumNext notetaking app on your local platfor
   - You can download Thunderbird for free [here](https://www.thunderbird.net/en-US/download/).
   - You can download TriliumNext for free [here](https://github.com/TriliumNext/Notes/releases).
 
-Currently working to get *Trilium Clipper* added into the Thunderbird Add-on Manager. Until then, you can install Trilium Clipper by downloading the installation file from the [TriliumClipper Add-on Site](https://github.com/0xbismarck/ThunderbirdTriliumClipper/releases/), downloading the XPI file, and install that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*).
-  <!--- You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
-    <!-- - By searching for "ObsdianClipper" in the Add-on mMnager (*Settings->Add-ons Manager*).
-    - Or by downloading a file from the [Thunderbird Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/), clicking the "Download Now" button to get an XPI file, and installing that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*). -->
+You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
+ - By searching for "TriliumClipper" in the Add-on Manager (*Settings->Add-ons Manager*).
+ - Or by downloading the installation file from the [TriliumClipper Add-on Site](https://addons.thunderbird.net/en-US/thunderbird/addon/triliumclipper/), downloading the XPI file, and install that file from the add-on manager (*Add-on Manager->Settings->Install Add-on From File*).
+
+
 To test the development version of Trilium Clipper downlaod the source code from the [TriliumClipper Site](https://github.com/0xbismarck/ThunderbirdTriliumClipper) and follow then follow the instructions [here](https://developer.thunderbird.net/add-ons/hello-world-add-on#installing).
 
 After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
-<!-- ![Here is what the *Options* tab looks like](docs/OptionsTab.png) 
-@todo - add this back in later-->
+![Here is what the *Options* tab looks like](docs/OptionsTab.png) 
 
 
 After you've installed and configured the add-on, you're ready to clip emails!
+
+### Building Source
+If you want to build the source code from the repository, there is a build.sh script that will create the xpi file for you to install.
 
 ## Usage
 To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. (Note, TriliumNext needs to be open before you send an e-mail)
