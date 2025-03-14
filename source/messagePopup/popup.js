@@ -14,8 +14,8 @@
 // Released under the Mozilla Public Licence. 
 // See https://github.com/0xbismarck/ThunderbirdTriliumClipper/blob/main/LICENSE
 //
-// Background.js - Main execution path
-//
+// popup.js - Code for the Obsidian Clipper add-on for Thunderbird
+// to save a selected mail message .//
 ///////////////////////////////////////////////////////////////////////////////
 
 // Main execution path
