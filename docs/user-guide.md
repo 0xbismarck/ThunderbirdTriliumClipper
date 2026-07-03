@@ -98,6 +98,13 @@ Before you use this extension to send e-mails to TriliumNotes, remember to have 
 ### TriliumNext Parent Note Does Exist.
 If you clip an email and see a "TriliumNextClipper: Validation failed on property 'parentNoteId': Note 'XL1NKSAV3H1RUL3' does not exist." error, the *ParentNoteId* field is not set properly. If you are unsure of the value to set, scroll up to #Add-on-Options and review the instructions.
 
+### Self-hosted Trilium
+Self-hosted Trilium instances don’t always expose the same external port as the desktop setup. The ThunderbirdTriliumClipper must be configured with the host/port from your `docker-compose.yml` (and the correct API base path for Trilium).
+
+For example, if your compose file maps `8080` like:
+`'8080:8080'`
+then set the clipper base URL to:
+`http://[IP-Address]:8080/etapi`
 
 <!-- ### Unable to Save Email Attachments
 The attachment clipping feature was added in ObsidianClipper version v4.1 in July of 2024. It is unclear what, if any
