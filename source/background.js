@@ -300,13 +300,13 @@ function buildMessageBody(msgPart, maxEmailSize, contentIdToFilenameMap)
     
     // Do we need to crop the email text? Check for plain text first.
     if (plainTextMessageBody.length > maxEmailSize) {
-        plainTextMessageBody = plainTextMessageBody.substr(1, maxEmailSize);
+        plainTextMessageBody = plainTextMessageBody.slice(0, maxEmailSize);
         plainTextMessageBody = plainTextMessageBody + "\n\n\n ========= Plain text Email cropped after " + maxEmailSize + " bytes ========= \n";
     }
     
     // Now check for HTML text size.
     if (htmlMessageBody.length > maxEmailSize) {
-        htmlMessageBody = htmlMessageBody.substr(1, maxEmailSize);
+        htmlMessageBody = htmlMessageBody.slice(0, maxEmailSize);
         htmlMessageBody = htmlMessageBody + "\n\n\n ========= HTML Email cropped after " + maxEmailSize + " bytes ========= \n";
     }
 }
