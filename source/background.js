@@ -631,7 +631,7 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
     
     if(undefined != message.tags) {
         // Get a master list of tags known by Thunderbird
-        let knownTagArray = await messenger.messages.listTags();
+        let knownTagArray = await messenger.messages.tags.list();
         
         // Loop through the tags on the email and find any matches
         for (var currMsgTagKeyString of message.tags) {

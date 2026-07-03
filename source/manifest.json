@@ -28,6 +28,7 @@
     "permissions": [
         "messagesModify",
         "messagesRead",
+        "messagesTagsList",
         "storage",
         "menus",
         "downloads",
