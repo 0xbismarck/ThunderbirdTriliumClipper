@@ -436,7 +436,10 @@ async function clipEmail(storedParameters)
     let messageSubject = message.subject;
     let messageDate = message.date.toLocaleDateString();
     let messageTime = message.date.toLocaleTimeString();
-    let messageAuthor = message.author;
+
+    // Sanitizing the html tags that sometimes appear in this string that results in messages not appearing. (See: Issue #6)
+    let messageAuthor = message.author ?? "";
+    messageAuthor = messageAuthor.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     
     // Create a mail "mid:" URI with the message ID
     // TODO: Put in template subsitition so it's only processed if used
@@ -495,7 +498,6 @@ async function clipEmail(storedParameters)
             messageBody = plainTextMessageBody;
         }
     }
-    
     console.log("background.js - clipEmail - messageBody: " + messageBody);
     
     // Build note name and content from templates and message data.
