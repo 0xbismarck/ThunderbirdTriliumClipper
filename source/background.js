@@ -384,7 +384,7 @@ async function clipEmail(storedParameters)
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
     let messageLinkText = ""
     // Log that we're clipping the message
-    await displayStatusText("TriliumNextClipper: Clipping message.");
+    await displayStatusText("TriliumClipper: Clipping message.");
     
     // Get the active tab in the current window using the tabs API.
     let tabs = await messenger.tabs.query({ active: true, currentWindow: true });
@@ -566,12 +566,12 @@ async function clipEmail(storedParameters)
     console.log(`background.js: Note subject: \"${noteSubject}\"`);
     console.log("background.js: Note content:\n" + noteContent);
     
-    // Build the TriliumNext URI
+    // Build the Trilium Notes URI
     let uploadInfo = { abortController: new AbortController() };
     let triliumUrl = triliumdb + "/create-note"
 
 
-    // Build the TriliumNext http header.
+    // Build the Trilium Notes http header.
     let headers = {
         "authorization": triliumToken,
         // "Access-Control-Allow-Origin": "*", 
@@ -593,7 +593,7 @@ async function clipEmail(storedParameters)
     console.log('fetchInfo: ' +fetchInfo.toString());
     
     // Log status
-    await displayStatusText("TriliumNextClipper: Sending data to TriliumNext application.");
+    await displayStatusText("TriliumClipper: Sending data to Trilium Notes application.");
     
     // Create new note
     try {
@@ -608,18 +608,18 @@ async function clipEmail(storedParameters)
             // console.log("Trilium Result: " + json.note.noteId);
             labelNewNote(message, json.note.noteId, triliumdb, headers);
             updateNoteIcon(json.note.noteId, triliumdb, headers); // @TODO - updating this configurable
-            await displayStatusText("TriliumNextClipper: Message clipped.");
+            await displayStatusText("TriliumClipper: Message clipped.");
         }
         else {
             // {'status': 400, 'code': 'PROPERTY_VALIDATION_ERROR', 'message': "Validation failed on property 'parentNoteId': Note 'LVA9YEQrPW0d' does not exist."}
             console.log(json.message);
-            await displayAlert("TriliumNextClipper: " + json.message);
+            await displayAlert("TriliumClipper: " + json.message);
         }
     }
     catch (TypeError)
     {
         console.log("Error: Make sure Trilium is open")
-        await displayAlert("Error: Please verify that TriliumNext is open.")
+        await displayAlert("Error: Please verify that Trilium Notes is open.")
     }
 }
 
