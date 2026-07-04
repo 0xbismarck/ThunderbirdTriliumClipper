@@ -1,16 +1,16 @@
-This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/ThunderbirdObsidianClipper). The code is experimental at this point in time and is being developed. As is, the extension will send e-mail to TriliumNext. 
+This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/ThunderbirdObsidianClipper). The code is experimental at this point in time and is being developed. As is, the extension will send e-mail to Trilium Notes. 
 
 The references in this project need to be updated to point to ThunderbirdTriliumClipper.
 
 # ThunderbirdTriliumClipper
-TriliumClipper is an add-on for the Thunderbird email client that lets a user clip messages to the TriliumNext notetaking application. Both applications are open source and free to use, just like this add-on!
+TriliumClipper is an add-on for the Thunderbird email client that lets a user clip messages to the Trilium Notes application. Both applications are open source and free to use, just like this add-on!
 
 In addition to the information below, there is a [User Guide](./docs/user-guide.md) giving detailed information on how to use the add-on.
 
 ## Installation
-You will first need to have the TriliumNext notetaking app on your local platform as well as the Thunderbird email client.
+You will first need to have the Trilium Notes app on your local platform as well as the Thunderbird email client.
   - You can download Thunderbird for free [here](https://www.thunderbird.net/en-US/download/).
-  - You can download TriliumNext for free [here](https://github.com/TriliumNext/Trilium/releases).
+  - You can download Trilium Notes for free [here](https://github.com/TriliumNext/Trilium/releases).
 
 You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
  - By searching for "TriliumClipper" in the Add-on Manager (*Settings->Add-ons Manager*).
@@ -19,7 +19,7 @@ You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
 
 To test the development version of Trilium Clipper download the source code from the [TriliumClipper Site](https://github.com/0xbismarck/ThunderbirdTriliumClipper) and follow then follow the instructions [here](https://developer.thunderbird.net/add-ons/hello-world-add-on#installing).
 
-After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
+After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with Trilium Notes on your machine.
 ![Here is what the *Options* tab looks like](docs/OptionsTab.png) 
 
 
@@ -29,16 +29,16 @@ After you've installed and configured the add-on, you're ready to clip emails!
 If you want to build the source code from the repository, there is a build.sh script that will create the xpi file for you to install.
 
 ## Usage
-To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. (Note, TriliumNext needs to be open before you send an e-mail)
+To use TriliumClipper, just select an email and either right click it to find an "Trilium" icon in the menu or open the email and look for the "Trilium" icon on the header (where you will also find the Reply and Forward buttons). Press the "Trilium" button and the message will be sent to your Trilium Notes application. (Note, Trilium Notes needs to be open before you send an e-mail)
 
-![Click on the Trilium Clipper icon when viewing a message to save it into TriliumNext.](docs/MessagePane.png)
+![Click on the Trilium Clipper icon when viewing a message to save it into Trilium Notes.](docs/MessagePane.png)
 
 Once your email has been clipped, it will look like the screenshot below. By default, your note will be placed under the note with the ParentNoteId that was configured in the Options.
 
-If you only wish to clip a portion of an email's text, select the text before pressing the TriliumNext icon.
+If you only wish to clip a portion of an email's text, select the text before pressing the Trilium Notes icon.
 
 
-![This is what a clipped email message looks like in TriliumNext. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](docs/ClippedNote.png)
+![This is what a clipped email message looks like in Trilium Notes. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](docs/ClippedNote.png)
 
 
 ## Getting More Help

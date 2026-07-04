@@ -10,8 +10,8 @@
 <body>
   <hr>
   <h1>Trilium URL</h1>
-  <p>The Trilium URL is the location where TriliumNotes sends data for the creation of a new note. 
-    By default, when TriliumNext is installed on your local machine, it will receive the note on the 
+  <p>The Trilium URL is the location where Trilium Notes sends data for the creation of a new note. 
+    By default, when Trilium Notes is installed on your local machine, it will receive the note on the 
     localhost:port combination below. Otherwise you need to specifiy where Thunderbird needs to send data. 
     Ie: Docker will depends on the port exposed in docker-compose.yml. 
     <form>
@@ -22,8 +22,8 @@
     </form> 
   <hr>
   <h1>ETAPI Token (Required)</h1>
-  <p>TriliumNext uses an authentication token to confirm that Thunderbird has permission to create notes.
-    To generate an ETAPI token, you need to open TriliumNext and click on the TriliumNext icon in the upper left corner. 
+  <p>Trilium Notes uses an authentication token to confirm that Thunderbird has permission to create notes.
+    To generate an ETAPI token, you need to open Trilium Notes and click on the Trilium Notes icon in the upper left corner. 
     Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it below.
     <form>
       <label><b>ETAPI Token for Authenticating to Trilium:</b></label>
@@ -33,7 +33,7 @@
     </form> 
   <hr>
   <h1>ParentNoteId</h1>
-  <p>Thunderbird needs to know where in TriliumNext the software should send the new note. The noteId for any note can be 
+  <p>Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be 
     found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called 
     "Note ID". Enter that value below.
     <!-- <img src="../images/noteID.png"> -->
@@ -153,7 +153,7 @@
                 See the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">User Guide</a> for an example.</li>-->
             </ul>
         <li><b>_MSGAUTHOR</b> - The message author.</li>
-        <!-- <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to TriliumNext. If no message attachments were saved, returns the string "none."</li> -->
+        <!-- <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Trilium Notes. If no message attachments were saved, returns the string "none."</li> -->
         <li><b>_MSGIDURI</b> - A URI that can be clicked to open the message.</li>
             <ul><li>For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.</li></ul>
         <li><b>_MSGCONTENT</b> - The actual text content of the message.</li>
@@ -202,7 +202,7 @@
   <hr>
   <h1>Maximum Clipped Email Note Size</h1>
   <p>To conserve space in your vault or to resolve certain technical problems, you may want
-  to limit the size of the emails clipped to TriliumNext. If you set a limit below, Trilium
+  to limit the size of the emails clipped to Trilium Notes. If you set a limit below, Trilium
   Clipper will crop an email to the size you choose. To activate this feature, enter
   the maximum email size. A nonnumeric value (such as the text "disabled") disables this feature.
   <form>

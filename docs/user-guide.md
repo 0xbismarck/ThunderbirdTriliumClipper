@@ -1,7 +1,7 @@
-This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/ThunderbirdObsidianClipper). The code is experimental at this point in time and is being developed. As is, the extension will send e-mail to TriliumNext.
+This project is a fork of [ThunderbirdObsidianClipper](https://github.com/KNHaw/ThunderbirdObsidianClipper). The code is experimental at this point in time and is being developed. As is, the extension will send e-mail to Trilium Notes.
 
 # ThunderbirdTriliumClipper User Guide
-TriliumClipper is an add-on for the Thunderbird email client that lets a user clip messages to the TriliumNext notetaking application. You can find out more at the <!--[Thunderbird add-on page](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/) or [at the -->  [project GitHub page](https://github.com/0xbismarck/ThunderbirdTriliumClipper/).
+TriliumClipper is an add-on for the Thunderbird email client that lets a user clip messages to the Trilium Notes notetaking application. You can find out more at the <!--[Thunderbird add-on page](https://addons.thunderbird.net/en-US/thunderbird/addon/obsidianclipper/) or [at the -->  [project GitHub page](https://github.com/0xbismarck/ThunderbirdTriliumClipper/).
 
 
 ## Table of Contents
@@ -14,9 +14,9 @@ TriliumClipper is an add-on for the Thunderbird email client that lets a user cl
 - [Questions? Feedback?](#Questions-Feedback)
 
 ## Installation
-You will first need to have the TriliumNext notetaking app on your local platform as well as the Thunderbird email client.
+You will first need to have the Trilium Notes app on your local platform as well as the Thunderbird email client.
   - You can download Thunderbird for free [here](https://www.thunderbird.net/en-US/download/).
-  - You can download TriliumNext for free [here](https://github.com/TriliumNext/Trilium/releases).
+  - You can download TriliumN Notes for free [here](https://github.com/TriliumNext/Trilium/releases).
 
 You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
  - By searching for "TriliumClipper" in the Add-on Manager (*Settings->Add-ons Manager*).
@@ -24,29 +24,29 @@ You can install the *Trilium Clipper* add-on into Thunderbird in two ways:
 
 To test the development version of Trilium Clipper download the source code from the [TriliumClipper Site](https://github.com/0xbismarck/ThunderbirdTriliumClipper) and follow then follow the instructions [here](https://developer.thunderbird.net/add-ons/hello-world-add-on#installing).
 
-After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with TriliumNext on your machine.
+After installing TriliumClipper to your Thunderbird client, select the Options tab (*Settings->Add-ons Manager->Trilium Clipper->Options tab*) and configure the add-on to work with Trilium Notes on your machine.
 ![Here is what the *Options* tab looks like](./OptionsTab.png) 
 
 
 After you've installed and configured the add-on, you're ready to clip emails!
 
 ## Usage
-To use TriliumClipper, just select an email and either right click it to find an "TriliumNext" icon in the menu or open the email and look for the "TriliumNext" icon on the header (where you will also find the Reply and Forward buttons). Press the "TriliumNext" button and the message will be sent to your TriliumNext application. (Note, TriliumNext needs to be open before you send an e-mail)
+To use TriliumClipper, just select an email and either right click it to find an "Trilium" icon in the menu or open the email and look for the "Trilium" icon on the header (where you will also find the Reply and Forward buttons). Press the "Trilium" button and the message will be sent to your Trilium Notes application. (Note, Trilium Notes needs to be open before you send an e-mail)
 
-![Click on the Trilium Clipper icon when viewing a message to save it into TriliumNext.](./MessagePane.png)
+![Click on the Trilium Clipper icon when viewing a message to save it into Trilium Notes.](./MessagePane.png)
 
 Once your email has been clipped, it will look like the screenshot below. By default, your note will be placed under the note with the ParentNoteId that was configured in the Options.
 
-If you only wish to clip a portion of an email's text, select the text before pressing the TriliumNext icon.
+If you only wish to clip a portion of an email's text, select the text before pressing the Trilium Notes icon.
 
-![This is what a clipped email message looks like in TriliumNext. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](./ClippedNote.png)
+![This is what a clipped email message looks like in Trilium Notes. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](./ClippedNote.png)
 
 ## Add-on Options
 There are a number of options that a user can use to configure the clipper add-on. These can be found on the Options tab for the add-on.
 
-- *Trilium URL* - The Trilium URL is the location where TriliumNotes sends data for the creation of a new note. By default, when TriliumNext is installed on your local machine, it will receive the note on the localhost:port combination below. Otherwise you need to specifiy where Thunderbird needs to send data.
-- *ETAPI Token* - TriliumNext uses an authentication token to confirm that Thunderbird has permission to create notes. To generate an ETAPI token, you need to open TriliumNext and click on the TriliumNext icon in the upper left corner. Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it in this field.
-- *ParentNoteId* - Thunderbird needs to know where in TriliumNext the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
+- *Trilium URL* - The Trilium URL is the location where Trilium Notes sends data for the creation of a new note. By default, when Trilium Notes is installed on your local machine, it will receive the note on the localhost:port combination below. Otherwise you need to specifiy where Thunderbird needs to send data.
+- *ETAPI Token* - Trilium Notes uses an authentication token to confirm that Thunderbird has permission to create notes. To generate an ETAPI token, you need to open Trilium Notes and click on the Trilium Notes icon in the upper left corner. Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it in this field.
+- *ParentNoteId* - Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
 ![NoteId](./noteID.png)
 
 <!--- *Message Attachments (Optional Feature)* - To save email attachments with clipped emails, do the following:
@@ -93,10 +93,10 @@ If TriliumClipper is not working for you, please take a moment to reread the ins
 
 If that does not work, please try some of the steps below.
 
-Before you use this extension to send e-mails to TriliumNotes, remember to have TriliumNotes open on your computer.
+Before you use this extension to send e-mails to Trilium Notes, remember to have Trilium Notes open on your computer.
 
-### TriliumNext Parent Note Does Exist.
-If you clip an email and see a "TriliumNextClipper: Validation failed on property 'parentNoteId': Note 'XL1NKSAV3H1RUL3' does not exist." error, the *ParentNoteId* field is not set properly. If you are unsure of the value to set, scroll up to #Add-on-Options and review the instructions.
+### Trilium Notes Parent Note Does Exist.
+If you clip an email and see a "TriliumClipper: Validation failed on property 'parentNoteId': Note 'XL1NKSAV3H1RUL3' does not exist." error, the *ParentNoteId* field is not set properly. If you are unsure of the value to set, scroll up to #Add-on-Options and review the instructions.
 
 ### Self-hosted Trilium
 Self-hosted Trilium instances don’t always expose the same external port as the desktop setup. The ThunderbirdTriliumClipper must be configured with the host/port from your `docker-compose.yml` (and the correct API base path for Trilium).
@@ -120,12 +120,12 @@ and make sure that the *_MSGCONTENT* placeholder is present. If is isn't, the bo
 If this happens, insert the *_MSGCONTENT* placeholder into the *Note Content Template* field and save it 
 or use the "Restore Default" button to go back to a known, good baseline.
 
-### TriliumNext Button Missing
+### Trilium Notes Button Missing
 There is a [known issue](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues/2) when [Thunderbird Conversations](https://addons.thunderbird.net/en-US/thunderbird/addon/gmail-conversation-view/) is installed and enabled. The issue is currently being investigated. For the moment there are two options for users that experiance this issue:
 - Use the classic reader option
 - Disable the Conversations add-on
 
-If the button is missing and you don't have the add-on installed, try disabling any other add-on you have installed until the button reappears. Once you identify which add-on causes a conflict with TriliumNext, please submit a [bug report](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues) with information about what add-on is causing an issue, a link to the add-on page, your Thunderbird version, and what operating system you are using.
+If the button is missing and you don't have the add-on installed, try disabling any other add-on you have installed until the button reappears. Once you identify which add-on causes a conflict with Trilium Notes, please submit a [bug report](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues) with information about what add-on is causing an issue, a link to the add-on page, your Thunderbird version, and what operating system you are using.
 
 ### Capturing a Debug Log
 If you have tried the above and have not fixed your problem, you should capture a debug log and send it to the development team via the feedback links below.
