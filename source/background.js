@@ -311,6 +311,15 @@ function buildMessageBody(msgPart, maxEmailSize, contentIdToFilenameMap)
     }
 }
 
+// Sanitizing html characters that impact rendering within Trilium. (Issue #6)
+function sanitizeEmailHtml(email) 
+{
+    return (email ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+}
+
 // Function to get "to," "cc," and "bcc" fields of an email and format them as requested.
 function getRecipients(msg, field, yamlFormat=false)
 {
@@ -344,7 +353,7 @@ function getRecipients(msg, field, yamlFormat=false)
                 }
                 
                 // Add next recipient
-                const nextRecipient = recipientArray[index];
+                const nextRecipient = sanitizeEmailHtml(recipientArray[index]);
                 messageRecipients = messageRecipients + nextRecipient;
             }
         }
@@ -357,7 +366,7 @@ function getRecipients(msg, field, yamlFormat=false)
             for (let index = 0; index < recipientArray.length; ++index) {
                 
                 // Add next recipient to the list. Replace quotes with backslashed quotes, per YAML specification.
-                const nextRecipient = recipientArray[index].replaceAll('\"', '\\"');
+                const nextRecipient = sanitizeEmailHtml(recipientArray[index].replaceAll('\"', '\\"'));
                 
                 // Make a new line with 
                 messageRecipients = messageRecipients + "\n- \"" + nextRecipient + "\"";
@@ -367,6 +376,7 @@ function getRecipients(msg, field, yamlFormat=false)
     
     return messageRecipients;
 }
+
 
 
 // Function to actually clip the email. Pass in the saved array of parameters.
@@ -438,8 +448,7 @@ async function clipEmail(storedParameters)
     let messageTime = message.date.toLocaleTimeString();
 
     // Sanitizing the html tags that sometimes appear in this string that results in messages not appearing. (See: Issue #6)
-    let messageAuthor = message.author ?? "";
-    messageAuthor = messageAuthor.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    let messageAuthor = sanitizeEmailHtml(message.author)
     
     // Create a mail "mid:" URI with the message ID
     // TODO: Put in template subsitition so it's only processed if used
