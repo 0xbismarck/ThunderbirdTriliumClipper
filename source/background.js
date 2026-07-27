@@ -1025,6 +1025,12 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             // Tag and label the note as the text clip path does.
             if(null != pdfNoteId) {
                 labelNewNote(message, pdfNoteId, triliumdb, headers);
+
+                // Store the message's attachments on the note just created, as the
+                // text clip path does.
+                await saveAttachments(message.id, pdfNoteId, attachmentSaveEnabled,
+                    attachmentStorageMode, triliumdb, headers);
+
                 await displayStatusText("TriliumClipper: Message clipped as PDF.");
             }
         }
