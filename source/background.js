@@ -138,6 +138,9 @@ async function displayConfirm(messageString) {
 
 // Function to display clip status
 // NOTE: Do not pass escaped quotes in messageString as they can hose the executeScrpt()
+// NOTE: Writing to the message being displayed needs the messagesModify permission.
+// Without it every status message is thrown away by the catch below and the user
+// is left with no sign of whether a message was clipped.
 async function displayStatusText(messageString) {
     console.log("displaying status text \"" + messageString + "\" in tab " + latestMsgDispTab);
     
@@ -155,7 +158,11 @@ async function displayStatusText(messageString) {
         
         // Schedule status line for removal after a given time.
         setTimeout(deleteStatusLine, STATUSLINE_PERSIST_MS, latestMsgDispTab);
-    } catch(e) { onError(e, ("displayStatusText - " + messageString)); }
+    } catch(e) {
+        // Report the failure rather than letting the status quietly disappear.
+        onError(e, ("displayStatusText - could not show \"" + messageString +
+            "\" in tab " + latestMsgDispTab));
+    }
 
 }
 

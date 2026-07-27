@@ -36,6 +36,7 @@
         }
     },
     "permissions": [
+        "messagesModify",
         "messagesRead",
         "messagesTagsList",
         "storage",
