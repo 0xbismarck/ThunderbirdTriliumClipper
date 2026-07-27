@@ -1,0 +1,20 @@
+[
+  {
+    "namespace": "NativePdf",
+    "functions": [
+      {
+        "name": "generate",
+        "type": "function",
+        "description": "Renders the message displayed in the given tab to a PDF using Thunderbird's own print engine. Returns the bytes of the PDF file as an array.",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer",
+            "description": "ID of the tab displaying the message to render"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -10,3 +10,60 @@
 .grid-container div {
     margin: 1ex;
 }
+
+/* Clip mode dropdown menu shown when the toolbar button is pressed */
+
+body {
+    margin: 0;
+    min-width: 280px;
+    font: caption;
+}
+
+.clip-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+}
+
+.clip-menu-header {
+    font-weight: bold;
+    padding: 6px 8px;
+    opacity: 0.7;
+}
+
+/* Each clip mode is a full width button holding a title and a description */
+.clip-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.clip-option:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.clip-option:focus-visible {
+    outline: 2px solid Highlight;
+}
+
+/* Disable the buttons while a clip is running so a message is not clipped twice */
+.clip-option[disabled] {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.clip-option-title {
+    font-weight: bold;
+}
+
+.clip-option-detail {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
