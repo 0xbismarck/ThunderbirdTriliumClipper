@@ -656,25 +656,26 @@ async function ensureTriliumHostPermission(triliumdb) {
         return false;
     }
 
-    let permissionRequest = { origins: [originPattern] };
-
     // Nothing to do if access to this host has already been granted.
-    if(await browser.permissions.contains(permissionRequest)) {
+    if(await browser.permissions.contains({ origins: [originPattern] })) {
         return true;
     }
 
-    console.log("Requesting permission for " + originPattern);
+    // Access has not been granted. Asking for it here would not work, because a
+    // permission can only be asked for while a click of the user's is being
+    // handled, and clipping a message does too much work before reaching this
+    // point for that to still be the case. Send the user to the Options page,
+    // where the "Grant Access" button asks for it from a click of its own.
+    console.log("No permission for " + originPattern + ", sending user to the Options page");
 
-    // Catch any errors thrown by request(), which needs a user action to run.
+    await displayAlert("TriliumClipper: TriliumClipper needs your permission to contact " +
+        originPattern + ". Open the Options page and press the Grant Access button, then clip the message again.");
+
+    // Catch any errors thrown by openOptionsPage()
     try {
-        if(await browser.permissions.request(permissionRequest)) {
-            return true;
-        }
-    } catch(e) { onError(e, ("ensureTriliumHostPermission - " + originPattern)); }
+        await browser.runtime.openOptionsPage();
+    } catch(e) { onError(e, "ensureTriliumHostPermission - openOptionsPage"); }
 
-    // The user refused, or the request could not be made.
-    await displayAlert("TriliumClipper: Permission to contact " + originPattern +
-        " is needed to clip messages. Press the Trilium button and allow access when asked.");
     return false;
 }
 
