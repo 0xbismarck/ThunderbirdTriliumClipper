@@ -205,6 +205,78 @@ async function readTextSelection(tabId) {
 // Attachments Configuration
 /////////////////////////////
 
+// Content types worked out from a filename, used only when the message does not
+// say what type an attachment is.
+const fileTypeByExtension = {
+    "pdf":  "application/pdf",
+    "png":  "image/png",
+    "jpg":  "image/jpeg",
+    "jpeg": "image/jpeg",
+    "gif":  "image/gif",
+    "webp": "image/webp",
+    "svg":  "image/svg+xml",
+    "bmp":  "image/bmp",
+    "txt":  "text/plain",
+    "csv":  "text/csv",
+    "html": "text/html",
+    "htm":  "text/html",
+    "json": "application/json",
+    "xml":  "application/xml",
+    "zip":  "application/zip",
+    "doc":  "application/msword",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "xls":  "application/vnd.ms-excel",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "ppt":  "application/vnd.ms-powerpoint",
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "odt":  "application/vnd.oasis.opendocument.text",
+    "ods":  "application/vnd.oasis.opendocument.spreadsheet",
+    "ics":  "text/calendar",
+    "eml":  "message/rfc822",
+    "mp3":  "audio/mpeg",
+    "mp4":  "video/mp4",
+};
+
+// Generic content type used by email for "some sort of file". Attachments arrive
+// carrying it when the sending client did not work out what the file was, and
+// storing it would leave Trilium showing the file as unrecognised binary data.
+const GENERIC_FILE_TYPE = "application/octet-stream";
+
+
+// Function to work out the content type an attachment should be stored under.
+// The message's own attachment record is trusted first, then the File object,
+// and the filename is only read if neither of them names a usable type.
+function fileTypeForAttachment(att, file, filename) {
+
+    // Take the first type offered that is not the generic "some sort of file".
+    for (let candidate of [att.contentType, file.type]) {
+        if((undefined != candidate) && ("" != candidate)) {
+            // Content types can carry parameters, as in "text/plain; charset=utf-8".
+            let contentType = candidate.split(";")[0].trim().toLowerCase();
+
+            if(("" != contentType) && (GENERIC_FILE_TYPE != contentType)) {
+                return contentType;
+            }
+        }
+    }
+
+    // Neither said anything useful, so work the type out from the file's name.
+    let extension = "";
+    if(filename.includes(".")) {
+        extension = filename.split(".").pop().toLowerCase();
+    }
+
+    let extensionType = fileTypeByExtension[extension];
+    if(undefined != extensionType) {
+        console.log("Attachment '" + filename + "' has no content type, using " + extensionType);
+        return extensionType;
+    }
+
+    // Nothing identified the file, so store it as a plain binary file.
+    return GENERIC_FILE_TYPE;
+}
+
+
 // Function to work out the role Trilium stores an attachment under. Trilium only
 // accepts "image" or "file", and shows attachments in the "image" role inline.
 function attachmentRoleForType(fileType) {
@@ -415,7 +487,11 @@ async function saveAttachments(messageId, noteId, attachmentSaveEnabled,
         // Get the attached file.
         let file = await browser.messages.getAttachmentFile(messageId, att.partName);
         let filename = file.name;
-        let fileType = file.type;
+
+        // Take the content type from the message's own attachment record. The File
+        // returned above does not reliably carry one, and a missing type is stored
+        // by Trilium as a generic binary file rather than as the kind of file it is.
+        let fileType = fileTypeForAttachment(att, file, filename);
 
         console.log("Getting attachment " + filename + ", type " + fileType);
 
