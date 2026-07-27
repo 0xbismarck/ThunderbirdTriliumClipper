@@ -49,18 +49,10 @@ There are a number of options that a user can use to configure the clipper add-o
 - *ParentNoteId* - Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
 ![NoteId](./noteID.png)
 
-<!--- *Message Attachments (Optional Feature)* - To save email attachments with clipped emails, do the following:
-    - Set the checkbox labeled "Enable saving of email attachments" and save the setting. Because the configuration steps
-    below need to be run before attachments can be saved, ObsidianClipper requires this manual step and will not
-    by default save attachments.
-    - Choose a location inside your Obsidian vault where the attachment files should go and enter the path to it 
-    in the "Attachment Save Folder" field. This should be relative to the Obsidian vault's root directory.
-    For example, setting this parameter to 'business/important emails/_resources' would place
-    your clipped emails into a '_resources' folder beneath 'business/important emails'
-    inside your vault. This value is what sets the path to attachments in the _MSGATTACHMENTLIST template, below.
-    If not properly set your clipped email will not point to the clipped attachments.
-    - ObsidianClipper can't change the default location to save files like attachments, so 
-    read the section "Attachment Permissions" carefully to set the path for saving files. -->
+- *Message Attachments (Optional Feature)* - To save the files attached to an email into Trilium Notes alongside the clipped message, set the checkbox labeled "Enable saving of email attachments" and save the setting. The files are sent straight to Trilium Notes, so there is nothing to configure in Thunderbird and no folder to choose.
+    - *Attachment Storage* - Chooses how Trilium Notes holds the saved files. Setting this to "Attachments of the note" stores them as attachments of the clipped email's note, reached through that note's "Attachments" tab. Setting it to "Child notes of the note" makes each file a note of its own beneath the clipped email's note, so the files appear in the note tree and can be moved, cloned, and linked to like any other note.
+    - Images are stored so that Trilium Notes displays them, and all other files are stored so that Trilium Notes offers them for download.
+    - The names of the saved files can be listed in the note itself with the _MSGATTACHMENTLIST placeholder described below.
 - *Note Filename and Content Templates* - These two fields allow a user to specify how notes clipped from emails are named and how 
   data is saved in Obsidian by use of placeholders in the text. See the Options tab of the add-on for a brief rundown of the
   different placeholder fields or the [Placeholders](#Placeholders) section of this guide for the definitive list of
@@ -82,7 +74,7 @@ These placeholders and what is substituted in the clipped note are detailed belo
 - *_MSGRECIPENTS* - List of all message recipients (in the email "to" field).
     - Similarly, *_MSGCC* will list the addresses from the "cc" field and *_MSGBCC* will list the addresses from "bcc"
 - *_MSGAUTHOR* - The message author.
-<!--- *_MSGATTACHMENTLIST* - A markdown list of links to message attachments saved to Obsidian. If no message attachments were saved, returns the string "none."-->
+- *_MSGATTACHMENTLIST* - A list of the message attachments saved to Trilium Notes. If no message attachments were saved, returns the string "none."
 - *_MSGIDURI* - A URI that can be clicked to open the message.
     - For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.
 - *_MSGCONTENT* - The actual text content of the message.
