@@ -19,7 +19,16 @@
       <input type="text" id="triliumdb">
       <button id="submit-triliumdb">Save</button>
       <button id="default-triliumdb">Restore Default</button>
-    </form> 
+    </form>
+  <p>TriliumClipper only asks for access to the Trilium server entered above, and only when
+    you allow it. Use the button below to grant that access after saving the URL. If access
+    has not been granted, you will be asked for it the first time you clip a message.
+    <form>
+      <label><b>Access to the Trilium server:</b></label>
+      <span id="triliumHostPermissionStatus">Checking...</span>
+      <br>
+      <button id="grant-triliumHostPermission">Grant Access</button>
+    </form>
   <hr>
   <h1>ETAPI Token (Required)</h1>
   <p>Trilium Notes uses an authentication token to confirm that Thunderbird has permission to create notes.

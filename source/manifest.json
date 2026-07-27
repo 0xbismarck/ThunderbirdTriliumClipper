@@ -35,13 +35,12 @@
         }
     },
     "permissions": [
-        "messagesModify",
         "messagesRead",
         "messagesTagsList",
         "storage",
-        "menus",
-        "downloads",
-        "notifications",
+        "menus"
+    ],
+    "optional_permissions": [
         "<all_urls>"
     ],
     "icons": {

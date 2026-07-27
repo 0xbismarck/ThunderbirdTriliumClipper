@@ -155,14 +155,90 @@ function loadOptionsFields(storedParameters)
 }
 
 
+/////////////////////////////
+// Trilium host permission
+/////////////////////////////
+
+// Function to turn the configured Trilium URL into a match pattern covering just
+// that host. Returns "" if the URL cannot be read.
+function triliumOriginPattern(triliumdb) {
+
+    // Catch the error thrown by URL() when the configured address is not a URL.
+    try {
+        let triliumUrl = new URL(triliumdb);
+        return triliumUrl.protocol + "//" + triliumUrl.host + "/*";
+    } catch(e) {
+        onError("triliumOriginPattern - " + e);
+    }
+
+    return "";
+}
+
+
+// Function to read the Trilium URL currently saved on the Options page.
+async function storedTriliumUrl() {
+    let storedParameters = await browser.storage.local.get("triliumdb");
+    let triliumdb = storedParameters["triliumdb"];
+
+    if(undefined == triliumdb) {
+        triliumdb = defaultParameters["triliumdb"];
+    }
+
+    return triliumdb;
+}
+
+
+// Function to show whether the add-on may contact the configured Trilium server.
+async function refreshTriliumHostPermissionStatus() {
+    var elem = document.getElementById("triliumHostPermissionStatus");
+    if((typeof elem === 'undefined') || (elem === null)) {
+        return;
+    }
+
+    let originPattern = triliumOriginPattern(await storedTriliumUrl());
+    if("" == originPattern) {
+        elem.innerText = "The Trilium URL above is not a valid address.";
+        return;
+    }
+
+    if(await browser.permissions.contains({ origins: [originPattern] })) {
+        elem.innerText = "Granted for " + originPattern;
+    } else {
+        elem.innerText = "Not granted for " + originPattern;
+    }
+}
+
+
+// Function to ask for access to the configured Trilium server. This is called
+// from a button press, because asking for a permission needs a user action.
+async function requestTriliumHostPermission() {
+    let originPattern = triliumOriginPattern(await storedTriliumUrl());
+
+    if("" == originPattern) {
+        await refreshTriliumHostPermissionStatus();
+        return;
+    }
+
+    // Catch any errors thrown by request()
+    try {
+        await browser.permissions.request({ origins: [originPattern] });
+    } catch(e) { onError("requestTriliumHostPermission - " + e); }
+
+    // Show the result of the request, whether it was allowed or refused.
+    await refreshTriliumHostPermissionStatus();
+}
+
+
 ///////////////////////
 // Main execution path
 ///////////////////////
 
 // Set up event listeners for option buttons.
 
-document.getElementById('submit-triliumdb').onclick = function() {storeOption("triliumdb"); };
-document.getElementById('default-triliumdb').onclick = function() {storeDefault("triliumdb"); };
+// Saving a new Trilium URL changes the host that access is needed for, so update
+// the permission status alongside it.
+document.getElementById('submit-triliumdb').onclick = function() {storeOption("triliumdb"); refreshTriliumHostPermissionStatus(); };
+document.getElementById('default-triliumdb').onclick = function() {storeDefault("triliumdb"); refreshTriliumHostPermissionStatus(); };
 
 document.getElementById('submit-triliumToken').onclick = function() {storeOption("triliumToken"); };
 document.getElementById('default-triliumToken').onclick = function() {storeDefault("triliumToken"); };
@@ -195,8 +271,18 @@ document.getElementById('default-noteContentTemplate').onclick = function() {sto
 document.getElementById('submit-maxEmailSize').onclick = function() {storeOption("maxEmailSize"); };
 document.getElementById('default-maxEmailSize').onclick = function() {storeDefault("maxEmailSize"); };
 
+document.getElementById('grant-triliumHostPermission').onclick = function(clickEvent) {
+    // Stop the button from submitting the form it sits in, which would reload the page
+    // and throw away the permission prompt.
+    clickEvent.preventDefault();
+    requestTriliumHostPermission();
+};
+
 // Get the stored parameters and pass them to a function to populate fields.
 browser.storage.local.get(null).then(loadOptionsFields, onError);
+
+// Show whether access to the Trilium server has been granted.
+refreshTriliumHostPermissionStatus();
 
 
 

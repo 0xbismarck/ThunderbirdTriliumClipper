@@ -623,6 +623,62 @@ function getRecipients(msg, field, yamlFormat=false)
 
 
 
+/////////////////////////////
+// Trilium host permission
+/////////////////////////////
+
+// Function to turn the configured Trilium URL into a match pattern covering just
+// that host, so the add-on can ask for access to the user's own Trilium server
+// rather than to every site. Returns "" if the URL cannot be read.
+function triliumOriginPattern(triliumdb) {
+
+    // Catch the error thrown by URL() when the configured address is not a URL.
+    try {
+        let triliumUrl = new URL(triliumdb);
+        return triliumUrl.protocol + "//" + triliumUrl.host + "/*";
+    } catch(e) {
+        onError(e, ("triliumOriginPattern - " + triliumdb));
+    }
+
+    return "";
+}
+
+
+// Function to make sure the add-on is allowed to reach the user's Trilium server.
+// The host is not known until the user configures it, so access to it is asked
+// for the first time a message is clipped rather than when the add-on installs.
+// Returns true if the add-on may contact the server.
+async function ensureTriliumHostPermission(triliumdb) {
+
+    let originPattern = triliumOriginPattern(triliumdb);
+    if("" == originPattern) {
+        await displayAlert("TriliumClipper: The Trilium URL on the Options page is not a valid address.");
+        return false;
+    }
+
+    let permissionRequest = { origins: [originPattern] };
+
+    // Nothing to do if access to this host has already been granted.
+    if(await browser.permissions.contains(permissionRequest)) {
+        return true;
+    }
+
+    console.log("Requesting permission for " + originPattern);
+
+    // Catch any errors thrown by request(), which needs a user action to run.
+    try {
+        if(await browser.permissions.request(permissionRequest)) {
+            return true;
+        }
+    } catch(e) { onError(e, ("ensureTriliumHostPermission - " + originPattern)); }
+
+    // The user refused, or the request could not be made.
+    await displayAlert("TriliumClipper: Permission to contact " + originPattern +
+        " is needed to clip messages. Press the Trilium button and allow access when asked.");
+    return false;
+}
+
+
 ///////////////////////////
 // PDF clipping functions
 ///////////////////////////
@@ -782,7 +838,13 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
                 maxEmailSize = parseInt(maxEmailSize);      // Set user defined limit
             }
         }
-    
+
+    // Make sure the add-on is allowed to reach the configured Trilium server
+    // before any work is done that would end up being thrown away.
+    if(false == await ensureTriliumHostPermission(triliumdb)) {
+        return;
+    }
+
     // Get the message currently displayed in the active tab, using the
     // messageDisplay API. Note: This needs the messagesRead permission.
     // The returned message is a MessageHeader object with the most relevant
@@ -1034,7 +1096,10 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
     
     if(undefined != message.tags) {
         // Get a master list of tags known by Thunderbird
-        let knownTagArray = await messenger.messages.tags.list();
+        // Note: listTags() is used in preference to the newer messages.tags.list(),
+        // which was only added in Thunderbird 121. Both return the same tag records,
+        // and using this one lets the add-on support Thunderbird 88 and later.
+        let knownTagArray = await messenger.messages.listTags();
         
         // Loop through the tags on the email and find any matches
         for (var currMsgTagKeyString of message.tags) {
