@@ -40,7 +40,7 @@ A message can be clipped in any of the formats below. Which one is used, and whe
 - *Plain Text* - Clips the plain text version of the message. Formatting, images, and links are dropped, but the text is preserved exactly as it was laid out in the email.
 - *HTML* - Clips the formatted HTML version of the message, keeping its styling and links. This is the format used by previous versions of the add-on.
 - *Plain Text and HTML* - Clips both versions into a single note, one after the other, separated by a horizontal rule.
-- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable.
+- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable. This format needs Thunderbird 115 or later.
 
 If a message does not contain the version you asked for (for example, a plain text only email clipped as HTML), the add-on falls back to the version the message does contain.
 
@@ -64,6 +64,8 @@ There are a number of options that a user can use to configure the clipper add-o
 - *ParentNoteId* - Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
 ![NoteId](./noteID.png)
 - *Default Clip Format* - Controls what the "Trilium" button does. Set it to *Ask every time* to have the button open a menu where you choose the format for each message. Set it to Plain Text, HTML, Plain Text and HTML, or PDF to have the button clip in that format straight away, without showing the menu. This setting is also the format used when a message is clipped from the message list right-click menu, which never shows the menu; clips made that way use HTML while the setting is *Ask every time*.
+
+    *Default Clip Format* replaces the *Enable HTML Content Clipping* checkbox found in earlier versions, which has been removed. The old setting is not carried over, so if you had unticked it to clip plain text, set *Default Clip Format* to *Plain Text* to get that behavior back.
 
 <!--- *Message Attachments (Optional Feature)* - To save email attachments with clipped emails, do the following:
     - Set the checkbox labeled "Enable saving of email attachments" and save the setting. Because the configuration steps

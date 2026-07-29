@@ -113,8 +113,14 @@
   <p>Clipping a message from the message list right-click menu never shows the menu. Those
   clips use the format chosen below, and use HTML when <i>Ask every time</i> is chosen.
   <p>Note that the PDF format renders the message with Thunderbird's own print engine, which
-  requires the message to be open. Choosing PDF as the default format means messages clipped
-  from the message list right-click menu, without being opened first, cannot be clipped.
+  requires the message to be open and Thunderbird 115 or later. Choosing PDF as the default
+  format means messages clipped from the message list right-click menu, without being opened
+  first, cannot be clipped.
+  <p>One of the features of HTML email is the ability to embed graphical images within the message.
+  Clipping those images as part of an HTML clip needs the optional <i>Message Attachments</i>
+  feature described above to be enabled and the <i>Attachments folder</i> to be set up. Other HTML
+  content (character formatting, images hosted on the internet, HTML lists, etc) is still supported
+  even if this is not the case.
 
   <form>
     <label><b>Clip messages in this format by default</b></label>
@@ -132,27 +138,6 @@
 
   <hr>
 
-  <h1>HTML Content Clipping</h1>
-  Emails can support HTML content. When an email contains HTML content, usually a plain text version of the message is also sent
-  so that email clients capable of only reading plain text can also read the message. By default, TriiliumClipper will clip
-  the HTML content when it is available instead of the plain text, translating it to Markdown format for Trilium. This behavior
-  can be disabled with the control below so that only the plain text message is clipped.
-  <p>One of the features of HTML email is the ability to embed graphical images within the message. TriiliumClipper needs the optional
-  <i>Message Attachments</i> feature described above be enabled and the <i>Attachments folder</i> be set up to support embedded images.
-  Other HTML content (character formatting, images hosted on the internet, HTML lists, etc) is still supported even if
-  this is not the case.
-  
-  <form> 
-    <label><b>Enable HTML Content Clipping</b></label>
-    <input type="checkbox" id="htmlClippingEnabled">
-    <br>
-    <button id="submit-htmlClippingEnabled">Save</button>
-    <button id="default-htmlClippingEnabled">Restore Default</button>
-  </form>  
-  
-  <hr>
-  
-  
   <h1>Note Filename and Content Templates</h1>
   <p>Indicate how a clipped email note's filename should appear and how the actual 
   note content should be formatted. Create a template using the following placeholders 

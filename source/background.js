@@ -570,7 +570,6 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
     let noteTemplate = "";
     let attachmentFolderPath = "";
     let attachmentSaveEnabled = false;
-    let htmlClippingEnabled = true;
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
     let messageLinkText = ""
     // Log that we're clipping the message
@@ -596,7 +595,6 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             attachmentFolderPath = storedParameters["attachmentFolderPath"];
             attachmentSaveEnabled = storedParameters["attachmentSaveEnabled"];
             maxEmailSize = storedParameters["maxEmailSize"];
-            htmlClippingEnabled = storedParameters["htmlClippingEnabled"];
             triliumdb = storedParameters["triliumdb"];
             triliumToken = storedParameters["triliumToken"];
             triliumParentNoteId = storedParameters["parentNoteId"];
@@ -684,17 +682,9 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
         // Get the message text
         buildMessageBody(full, maxEmailSize, contentIdToFilenameMap);
 
-        // The clip mode the user picked decides the format of the note. The older
-        // 'Enable HTML Content Clipping' option still applies when the user asked
-        // for HTML, so unchecking it clips plain text as it always has.
-        let effectiveClipMode = clipMode;
-        if((CLIPMODE_HTML == effectiveClipMode) && (false == htmlClippingEnabled)) {
-            console.log("clipEmail: HTML clipping disabled in options, clipping plain text");
-            effectiveClipMode = CLIPMODE_PLAINTEXT;
-        }
-
-        // Build the body in the requested format.
-        messageBody = composeMessageBody(effectiveClipMode);
+        // The clip mode the user picked is the only thing deciding the format of
+        // the note. Build the body in that format.
+        messageBody = composeMessageBody(clipMode);
     }
     console.log("background.js - clipEmail - messageBody: " + messageBody);
     

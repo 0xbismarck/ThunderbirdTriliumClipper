@@ -53,7 +53,6 @@ defaultParameters["noteContentTemplate"] =
     "_MSGCONTENT";
     
 defaultParameters["defaultClipMode"] = "ask";
-defaultParameters["htmlClippingEnabled"] = true;
 defaultParameters["maxEmailSize"] = "Disabled";
 defaultParameters["triliumdb"]  = "http://localhost:37840/etapi";
 defaultParameters["triliumUser"] = "etapi";
@@ -180,9 +179,6 @@ document.getElementById('default-parentNoteId').onclick = function() {storeDefau
 
 document.getElementById('submit-defaultClipMode').onclick = function() {storeOption("defaultClipMode"); };
 document.getElementById('default-defaultClipMode').onclick = function() {storeDefault("defaultClipMode"); };
-
-document.getElementById('submit-htmlClippingEnabled').onclick = function() {storeOption("htmlClippingEnabled"); };
-document.getElementById('default-htmlClippingEnabled').onclick = function() {storeDefault("htmlClippingEnabled"); };
 
 document.getElementById('submit-noteFilenameTemplate').onclick = function() {storeOption("noteFilenameTemplate"); };
 document.getElementById('default-noteFilenameTemplate').onclick = function() {storeDefault("noteFilenameTemplate"); };
