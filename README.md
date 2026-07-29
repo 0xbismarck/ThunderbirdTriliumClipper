@@ -40,13 +40,21 @@ If you only wish to clip a portion of an email's text, select the text before pr
 
 ![This is what a clipped email message looks like in Trilium Notes. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](docs/ClippedNote.png)
 
+### Saving Email Attachments
+TriliumClipper can also save the files attached to an email into Trilium Notes alongside the clipped message. This is off by default. To turn it on, tick "Enable saving of email attachments" on the add-on's Options tab and save the setting. The files are sent straight to Trilium Notes, so there is nothing to configure in Thunderbird and no folder to choose.
+
+The *Attachment Storage* option chooses how Trilium Notes holds the saved files:
+ - *Attachments of the note* - the files become attachments of the clipped email's note, reached through that note's "Attachments" tab.
+ - *Child notes of the note* - each file becomes a note of its own beneath the clipped email's note, so the files appear in the note tree and can be moved, cloned, and linked to like any other note.
+
+Images are stored so that Trilium Notes displays them, and all other files are stored so that Trilium Notes offers them for download. The names of the saved files can be listed in the note itself with the *_MSGATTACHMENTLIST* placeholder. See the [Add-on Options](./docs/user-guide.md#Add-on-Options) section of the User Guide for the full details.
 
 ## Getting More Help
 If TriliumClipper is not properly working, please take a moment to reread the instructions and reinstall the add-on. If the problem is still happening, please check out the 
 [Troubleshooting section of the User Guide](./docs/user-guide.md#Troubleshooting).
 
 ## Limitations & Future Features
-At this time, TriliumClipper will only clip the text portion of an email and not HTML content (i.e. embedded images, bold or italics, etc). If you're a user who is interested in this or other features, please let me know via the *Feedback* instructions below. Otherwise I will assume there is no demand for them.
+Saving embedded images from an HTML email requires the optional attachment saving feature described above to be enabled. If you're a user who is interested in other features, please let me know via the *Feedback* instructions below. Otherwise I will assume there is no demand for them.
 
 ## Questions? Feedback?
 TriliumClipper is still a work in progress. If you have any questions or want to give me feedback, please reach out to to the team

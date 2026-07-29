@@ -98,11 +98,18 @@ For example, if your compose file maps `8080` like:
 then set the clipper base URL to:
 `http://[IP-Address]:8080/etapi`
 
-<!-- ### Unable to Save Email Attachments
-The attachment clipping feature was added in ObsidianClipper version v4.1 in July of 2024. It is unclear what, if any
-problems that users might encounter using this feature. If you have a problem, please 
-[file an issue on GitHub](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues) so the development team can assist you and 
-update this User Guide to refelct the solutions that were found. -->
+### Attachments Are Missing
+If you clip an email that has files attached to it but those files do not turn up in Trilium Notes, check the following.
+
+Saving attachments is off by default. Open the add-on's Options tab, make sure the checkbox labeled "Enable saving of email attachments" is ticked, and press the Save button beneath it. Attachments are only saved for emails clipped after this setting has been saved, so clip the email again afterwards.
+
+If the setting is enabled, the files may not be where you are looking for them. The *Attachment Storage* option decides where they go. With "Attachments of the note" the files do not appear in the note tree at all; open the clipped email's note and look under its "Attachments" tab. With "Child notes of the note" the files appear in the note tree beneath the clipped email's note, so expand that note to see them.
+
+Embedded images in an HTML email are handled by this same feature. If an email's pictures are missing from the clipped note while the rest of the message came across correctly, the attachment saving feature is most likely disabled. Other HTML content, such as character formatting, HTML lists, and images hosted on the internet, does not depend on it.
+
+Finally, note that the *_MSGATTACHMENTLIST* placeholder only lists files that would be saved. If it reports "none" for an email you know has attachments, the feature is disabled rather than failing.
+
+If attachments are still missing after all of the above, [capture a debug log](#Capturing-a-Debug-Log) and [file an issue on GitHub](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues) so the problem can be looked into.
 
 
 ### Note Content Corrupted or Missing
