@@ -2,8 +2,36 @@
 <html>
 
 <head>
-    <script type="module" src="popup.js"></script>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="popup.css">
 </head>
 
+<body>
+    <div class="clip-menu">
+        <div class="clip-menu-header">Clip message to Trilium as...</div>
+
+        <button class="clip-option" id="clip-plaintext">
+            <span class="clip-option-title">Plain Text</span>
+            <span class="clip-option-detail">Clip the plain text version of the message</span>
+        </button>
+
+        <button class="clip-option" id="clip-html">
+            <span class="clip-option-title">HTML</span>
+            <span class="clip-option-detail">Clip the formatted HTML version of the message</span>
+        </button>
+
+        <button class="clip-option" id="clip-both">
+            <span class="clip-option-title">Plain Text and HTML</span>
+            <span class="clip-option-detail">Clip both versions into a single note</span>
+        </button>
+
+        <button class="clip-option" id="clip-pdf">
+            <span class="clip-option-title">PDF</span>
+            <span class="clip-option-detail">Clip the message as a PDF file note</span>
+        </button>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+</body>
 
 </html>

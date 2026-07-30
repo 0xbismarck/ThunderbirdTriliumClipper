@@ -35,9 +35,24 @@ To use TriliumClipper, just select an email and either right click it to find an
 
 ![Click on the Trilium Clipper icon when viewing a message to save it into Trilium Notes.](./MessagePane.png)
 
+A message can be clipped in any of the formats below. Which one is used, and whether you are asked to pick one each time, is set by the *Default Clip Format* option described in the next section. When that option is set to *Ask every time*, pressing the "Trilium" button opens a menu holding these choices:
+
+- *Plain Text* - Clips the plain text version of the message. Formatting, images, and links are dropped, but the text is preserved exactly as it was laid out in the email.
+- *HTML* - Clips the formatted HTML version of the message, keeping its styling and links. This is the format used by previous versions of the add-on.
+- *Plain Text and HTML* - Clips both versions into a single note, one after the other, separated by a horizontal rule.
+- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable. This format needs Thunderbird 115 or later.
+
+If a message does not contain the version you asked for (for example, a plain text only email clipped as HTML), the add-on falls back to the version the message does contain.
+
+If the *Default Clip Format* is set to one of the formats instead of *Ask every time*, no menu appears. Pressing the "Trilium" button clips the message straight away in that format.
+
+Clipping a message by right clicking it in the message list never shows this menu. Those clips use the *Default Clip Format* set on the Options tab, and use HTML when that option is set to *Ask every time*. Note that clipping as a PDF requires the message to be open, because the message has to be drawn before it can be printed. If you set the default clip format to PDF, right clicking a message in the message list without opening it will report that the message needs to be opened first.
+
+Because the PDF is rendered from the message as it is displayed, remote images that Thunderbird has blocked stay blocked in the PDF. Clipping a message never loads remote content, so it will not trip the tracking pixels some senders use to detect that a message was read.
+
 Once your email has been clipped, it will look like the screenshot below. By default, your note will be placed under the note with the ParentNoteId that was configured in the Options.
 
-If you only wish to clip a portion of an email's text, select the text before pressing the Trilium Notes icon.
+If you only wish to clip a portion of an email's text, select the text before pressing the Trilium Notes icon. A selection is clipped as plain text. Note that this does not apply to the PDF clip format, which always renders the whole message.
 
 ![This is what a clipped email message looks like in Trilium Notes. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](./ClippedNote.png)
 
@@ -48,6 +63,9 @@ There are a number of options that a user can use to configure the clipper add-o
 - *ETAPI Token* - Trilium Notes uses an authentication token to confirm that Thunderbird has permission to create notes. To generate an ETAPI token, you need to open Trilium Notes and click on the Trilium Notes icon in the upper left corner. Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it in this field.
 - *ParentNoteId* - Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
 ![NoteId](./noteID.png)
+- *Default Clip Format* - Controls what the "Trilium" button does. Set it to *Ask every time* to have the button open a menu where you choose the format for each message. Set it to Plain Text, HTML, Plain Text and HTML, or PDF to have the button clip in that format straight away, without showing the menu. This setting is also the format used when a message is clipped from the message list right-click menu, which never shows the menu; clips made that way use HTML while the setting is *Ask every time*.
+
+    *Default Clip Format* replaces the *Enable HTML Content Clipping* checkbox found in earlier versions, which has been removed. The old setting is not carried over, so if you had unticked it to clip plain text, set *Default Clip Format* to *Plain Text* to get that behavior back.
 
 <!--- *Message Attachments (Optional Feature)* - To save email attachments with clipped emails, do the following:
     - Set the checkbox labeled "Enable saving of email attachments" and save the setting. Because the configuration steps
