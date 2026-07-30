@@ -29,6 +29,21 @@ const STATUSLINE_PERSIST_MS = 10000;    // Delete status line messgaes after ind
 const ATTACHMENTMODE_ATTACHMENT = "attachment";  // Store as attachments of the note
 const ATTACHMENTMODE_CHILDNOTE  = "childnote";   // Store as child notes of the note
 
+// Modes describing the format a message is clipped in. These strings are shared
+// with the popup menu and with the default clip mode stored by the Options page.
+const CLIPMODE_PLAINTEXT = "plaintext";  // Clip the plain text part of the message
+const CLIPMODE_HTML      = "html";       // Clip the HTML part of the message
+const CLIPMODE_BOTH      = "both";       // Clip both parts into one note
+const CLIPMODE_PDF       = "pdf";        // Clip the message as a PDF file note
+
+// Not a format in itself. Stored as the default clip mode to ask the user which
+// of the formats above to use each time a message is clipped.
+const CLIPMODE_ASK       = "ask";
+
+// Path to the menu listing the clip formats, shown when the default clip mode
+// is CLIPMODE_ASK. An empty path means the button clips without asking.
+const CLIPMODE_POPUP_PATH = "messagePopup/popup.html";
+
 // Global, persistant variables.
 var latestMsgDispTab = 1;       // Latest tab recorded on an incoming onMessageDisplay event. Used for later reference.
 var plainTextMessageBody = "";  // Plain text of clipped message body
@@ -489,6 +504,66 @@ function sanitizeEmailHtml(email)
       .replace(/>/g, "&gt;");
 }
 
+// Function to wrap plain text so that Trilium renders it as it appeared in the
+// email. Without this, HTML collapses the message's whitespace and line breaks.
+function formatPlainTextAsHtml(plainText)
+{
+    return "<pre>" + sanitizeEmailHtml(plainText) + "</pre>";
+}
+
+
+// Function to build the message body in the format requested by the clip mode.
+// Expects buildMessageBody() to have already filled the plainTextMessageBody and
+// htmlMessageBody globals. Returns the HTML to place in the note.
+function composeMessageBody(clipMode)
+{
+    let messageBody = "";
+
+    switch (clipMode) {
+        // Plain text only. Fall back to the HTML if the message has no plain text part.
+        case CLIPMODE_PLAINTEXT : {
+            if(plainTextMessageBody != "") {
+                messageBody = formatPlainTextAsHtml(plainTextMessageBody);
+            } else {
+                console.log("composeMessageBody: no plain text part, falling back to HTML");
+                messageBody = htmlMessageBody;
+            }
+        }
+        break;
+
+        // Both parts, one after the other, separated by a rule.
+        case CLIPMODE_BOTH : {
+            if((plainTextMessageBody != "") && (htmlMessageBody != "")) {
+                messageBody = "<h3>Plain Text</h3>" + formatPlainTextAsHtml(plainTextMessageBody) +
+                    "<hr><h3>HTML</h3>" + htmlMessageBody;
+            } else if(htmlMessageBody != "") {
+                // Only one part exists, so clip it without the headings.
+                console.log("composeMessageBody: no plain text part, clipping HTML only");
+                messageBody = htmlMessageBody;
+            } else {
+                console.log("composeMessageBody: no HTML part, clipping plain text only");
+                messageBody = formatPlainTextAsHtml(plainTextMessageBody);
+            }
+        }
+        break;
+
+        // HTML only. Fall back to the plain text if the message has no HTML part.
+        case CLIPMODE_HTML :
+        default : {
+            if(htmlMessageBody != "") {
+                messageBody = htmlMessageBody;
+            } else {
+                console.log("composeMessageBody: no HTML part, falling back to plain text");
+                messageBody = formatPlainTextAsHtml(plainTextMessageBody);
+            }
+        }
+        break;
+    }
+
+    return messageBody;
+}
+
+
 // Function to get "to," "cc," and "bcc" fields of an email and format them as requested.
 function getRecipients(msg, field, yamlFormat=false)
 {
@@ -548,8 +623,113 @@ function getRecipients(msg, field, yamlFormat=false)
 
 
 
-// Function to actually clip the email. Pass in the saved array of parameters.
-async function clipEmail(storedParameters)
+///////////////////////////
+// PDF clipping functions
+///////////////////////////
+
+// Function to render the displayed message into a PDF. Returns a Uint8Array of
+// the PDF file.
+//
+// The rendering is done by Thunderbird's own print engine through the NativePdf
+// experiment API, so the PDF reproduces the message exactly as the message pane
+// draws it and its text stays selectable. The message is rendered as currently
+// displayed, so remote content that Thunderbird has blocked stays blocked and
+// clipping a message never loads remote images behind the user's back.
+async function buildMessagePdf(tabId)
+{
+    let pdfByteArray = await browser.NativePdf.generate(tabId);
+
+    // The experiment API hands the file back as a plain array of bytes.
+    return new Uint8Array(pdfByteArray);
+}
+
+
+// Function to upload a PDF to Trilium as a file note. ETAPI carries note content
+// as JSON, which cannot hold the PDF's binary data, so this creates the note
+// first and then PUTs the file itself to the note's content endpoint.
+async function uploadPdfNote(pdfBytes, noteSubject, triliumdb, headers, triliumParentNoteId)
+{
+    let uploadInfo = { abortController: new AbortController() };
+
+    // Trilium shows the note title as the file's name, so give it a .pdf suffix.
+    let pdfFilename = noteSubject + ".pdf";
+
+    // Create the file note. The content is a placeholder replaced by the PUT below.
+    let createFetchInfo = {
+        mode: "cors",
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            parentNoteId: triliumParentNoteId,
+            title: noteSubject,
+            type: "file",
+            mime: "application/pdf",
+            content: "placeholder"
+        }),
+        signal: uploadInfo.abortController.signal,
+    };
+
+    let response = await fetch(triliumdb + "/create-note", createFetchInfo);
+    let json = await response.json();
+
+    // Stop here if the note could not be created.
+    if(!response.ok) {
+        console.log(json.message);
+        await displayAlert("TriliumClipper: " + json.message);
+        return null;
+    }
+
+    let noteId = json.note.noteId;
+    console.log("Created PDF file note " + noteId);
+
+    // Now send the PDF itself as the note's content.
+    await displayStatusText("TriliumClipper: Uploading PDF to Trilium Notes application.");
+
+    // Send the raw bytes, so use a binary content type rather than the JSON one.
+    let contentHeaders = {
+        "authorization": headers["authorization"],
+        "content-type": "application/octet-stream"
+    };
+
+    let contentFetchInfo = {
+        mode: "cors",
+        method: "PUT",
+        headers: contentHeaders,
+        body: pdfBytes,
+        signal: uploadInfo.abortController.signal,
+    };
+
+    let contentResponse = await fetch(triliumdb + "/notes/" + noteId + "/content", contentFetchInfo);
+
+    // The content endpoint replies 204 with no body on success.
+    if(!contentResponse.ok) {
+        console.log("failure uploading PDF content, status " + contentResponse.status);
+        await displayAlert("TriliumClipper: Could not upload the PDF to Trilium Notes.");
+        return null;
+    }
+
+    // Label the note with the original filename so Trilium offers it on download.
+    let labelFetchInfo = {
+        mode: "cors",
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            noteId: noteId,
+            type: "label",
+            name: "originalFileName",
+            value: pdfFilename
+        }),
+        signal: uploadInfo.abortController.signal,
+    };
+    await addNoteAttribute(labelFetchInfo, triliumdb);
+
+    return noteId;
+}
+
+
+// Function to actually clip the email. Pass in the saved array of parameters and
+// the mode describing the format the message should be clipped in.
+async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
 {
     // Read the passed parameters that configure the app.
     let triliumdb = "";
@@ -559,10 +739,10 @@ async function clipEmail(storedParameters)
     let noteTemplate = "";
     let attachmentSaveEnabled = false;
     let attachmentStorageMode = ATTACHMENTMODE_ATTACHMENT;
-    let htmlClippingEnabled = true;
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
     let messageLinkText = ""
     // Log that we're clipping the message
+    console.log("background.js - clipEmail - clipMode = " + clipMode);
     await displayStatusText("TriliumClipper: Clipping message.");
     
     // Get the active tab in the current window using the tabs API.
@@ -584,7 +764,6 @@ async function clipEmail(storedParameters)
             attachmentSaveEnabled = storedParameters["attachmentSaveEnabled"];
             attachmentStorageMode = storedParameters["attachmentStorageMode"];
             maxEmailSize = storedParameters["maxEmailSize"];
-            htmlClippingEnabled = storedParameters["htmlClippingEnabled"];
             triliumdb = storedParameters["triliumdb"];
             triliumToken = storedParameters["triliumToken"];
             triliumParentNoteId = storedParameters["parentNoteId"];
@@ -652,29 +831,27 @@ async function clipEmail(storedParameters)
     let attachmentList = await listAttachmentNames(message.id, attachmentSaveEnabled);
 
     // Extract message body text from the message. First, see if user
-    // selected specific text to be saved.    
+    // selected specific text to be saved.
     // TODO - Make this handle HTML.
     let messageBody = await readTextSelection(latestMsgDispTab);
-    
+
+    // Zero out variables for extracted message content. Do this whether or not the
+    // user selected text so that a clip never picks up the previous message's body.
+    plainTextMessageBody = "";  // Plain text of clipped message body
+    htmlMessageBody = "";       // HTML of clipped message body
+
     // Was anything selected?
-    if(messageBody == "") {
-        // No text was selected - get entire message text. Zero out variables for extraced message content.
-        plainTextMessageBody = "";  // Plain text of clipped message body
-        htmlMessageBody = "";       // HTML of clipped message body 
-        
-        //messageBody = buildMessageBody(full, maxEmailSize);
-        
+    if(messageBody != "") {
+        // Text was selected. The selection is always plain text, so format it so
+        // that Trilium preserves its line breaks and does not read it as markup.
+        messageBody = formatPlainTextAsHtml(messageBody);
+    } else {
         // Get the message text
         buildMessageBody(full, maxEmailSize);
-        
-        // Set the message body to the HTML content (if present and user has configured to clip it) or the plain text.
-        if((true == htmlClippingEnabled) && (htmlMessageBody != "")) {
-            // Use the HTML
-            messageBody = htmlMessageBody;
-        } else {
-            // There is no HTML. Just use the plain text.
-            messageBody = plainTextMessageBody;
-        }
+
+        // The clip mode the user picked is the only thing deciding the format of
+        // the note. Build the body in that format.
+        messageBody = composeMessageBody(clipMode);
     }
     console.log("background.js - clipEmail - messageBody: " + messageBody);
     
@@ -752,9 +929,46 @@ async function clipEmail(storedParameters)
     // Build the Trilium Notes http header.
     let headers = {
         "authorization": triliumToken,
-        // "Access-Control-Allow-Origin": "*", 
+        // "Access-Control-Allow-Origin": "*",
         "content-type": "application/json"
     };
+
+    // A PDF clip creates a file note holding the rendered message rather than a
+    // text note built from the note content template, so handle it here.
+    if(CLIPMODE_PDF == clipMode) {
+        await displayStatusText("TriliumClipper: Rendering message as PDF.");
+
+        // The message is rendered by Thunderbird's print engine, which draws the
+        // whole message from the message pane. Any text the user selected is
+        // therefore not used, and the message headers come from the rendering
+        // rather than from the note content template.
+        try {
+            let pdfBytes = await buildMessagePdf(tabs[0].id);
+
+            let pdfNoteId = await uploadPdfNote(pdfBytes, noteSubject, triliumdb,
+                headers, triliumParentNoteId);
+
+            // Tag and label the note as the text clip path does.
+            if(null != pdfNoteId) {
+                labelNewNote(message, pdfNoteId, triliumdb, headers);
+
+                // Store the message's attachments on the PDF note, as the text
+                // clip path does. The PDF holds the rendered message only, so the
+                // attached files still have to be stored separately.
+                await saveAttachments(message.id, pdfNoteId, attachmentSaveEnabled,
+                    attachmentStorageMode, triliumdb, headers);
+
+                await displayStatusText("TriliumClipper: Message clipped as PDF.");
+            }
+        }
+        catch (e) {
+            onError(e, "clipEmail - PDF");
+            await displayAlert("TriliumClipper: Could not render the message as a PDF. " +
+                "Open the message before clipping it as a PDF.");
+        }
+
+        return;
+    }
 
     let fetchInfo = {
         mode: "cors",
@@ -888,19 +1102,71 @@ async function addNoteAttribute (fetchInfo, triliumdb) {
 }
 
 
-// Wrapper to run the email clip code
-function doEmailClip() {
+// Wrapper to run the email clip code in the given mode. When no mode is given
+// (for example, from the message list context menu) the user's configured
+// default clip mode is used.
+function doEmailClip(clipMode) {
     // Get the stored parameters and pass them to a function to perform the actual mail clipping.
-    browser.storage.local.get(null).then(clipEmail, onError);
+    browser.storage.local.get(null).then(function(storedParameters) {
+        // Fall back to the configured default mode, then to HTML.
+        let thisClipMode = clipMode;
+        if(undefined == thisClipMode) {
+            thisClipMode = storedParameters["defaultClipMode"];
+        }
+
+        // "Ask every time" is not a format a message can be clipped in. Reaching
+        // here with it means the user was not asked, as happens when a message is
+        // clipped from the message list context menu, so clip the HTML instead.
+        if(CLIPMODE_ASK == thisClipMode) {
+            thisClipMode = CLIPMODE_HTML;
+        }
+
+        if(undefined == thisClipMode) {
+            thisClipMode = CLIPMODE_HTML;
+        }
+
+        clipEmail(storedParameters, thisClipMode);
+    }, onError);
 }
+
+// Function to set whether the Trilium button opens the clip format menu. The menu
+// is only shown when the user has asked to choose a format every time. Otherwise
+// the button has no popup, so that pressing it fires the onClicked event below
+// and clips the message straight away in the configured format.
+async function updateClipModePopup(defaultClipMode) {
+
+    // Treat a missing setting as asking, matching the default on the Options page.
+    let popupPath = "";
+    if((undefined == defaultClipMode) || (CLIPMODE_ASK == defaultClipMode)) {
+        popupPath = CLIPMODE_POPUP_PATH;
+    }
+
+    console.log("updateClipModePopup: defaultClipMode = " + defaultClipMode +
+        ", popup = \"" + popupPath + "\"");
+
+    // Catch any errors thrown by setPopup()
+    try {
+        await browser.messageDisplayAction.setPopup({ popup: popupPath });
+    } catch(e) { onError(e, "updateClipModePopup"); }
+}
+
+
+// Function to read the stored default clip mode and apply it to the button.
+function refreshClipModePopup() {
+    browser.storage.local.get("defaultClipMode").then(function(storedParameters) {
+        updateClipModePopup(storedParameters["defaultClipMode"]);
+    }, onError);
+}
+
 
 //////////
 // doHandleCommand() - handler for messages from content scripts
 //////////
 const doHandleCommand = async (message, sender) => {
-    // Get command name and the sending tab ID
+    // Get command name, the sending tab ID, and the requested clip mode
     const { command } = message;
     const { tabId } = message;
+    const { clipMode } = message;
 
     const messageHeader = await browser.messageDisplay.getDisplayedMessage(tabId);
     
@@ -916,10 +1182,10 @@ const doHandleCommand = async (message, sender) => {
         // Button requests that an email be clipped.
         // Reply with clipstatus and eventually clipdone
         case "cliprequest" : {
-            console.log("message 'cliprequest' received.");
-            
-            // Clip email
-            doEmailClip();
+            console.log("message 'cliprequest' received. clipMode = " + clipMode);
+
+            // Clip email in the mode the user picked from the popup menu
+            doEmailClip(clipMode);
             
             // Reply with status
             return true;
@@ -968,12 +1234,40 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
-// Add clipper to the message_list menu
+// Add clipper to the message_list menu. Note that the menu handler is passed an
+// OnClickData object, so call doEmailClip() with no argument to clip using the
+// user's configured default clip mode.
 browser.menus.create({
     title: "TriliumClipper",
     contexts: ["message_list"],
-    onclick: doEmailClip,
+    onclick: function() { doEmailClip(); },
   });
+
+
+// Handle presses of the Trilium button. This event only fires when the button has
+// no popup, which is the case when the user has chosen a clip format rather than
+// asking every time, so clip the message in the configured format.
+browser.messageDisplayAction.onClicked.addListener((tab) => {
+    console.log("messageDisplayAction clicked for tab " + tab.id);
+
+    // Record the tab so status messages reach the message being clipped.
+    latestMsgDispTab = tab.id;
+
+    doEmailClip();
+});
+
+
+// Show or hide the clip format menu whenever the user changes the setting on the
+// Options page, so the button starts behaving the new way straight away.
+browser.storage.onChanged.addListener((changes, areaName) => {
+    if(("local" == areaName) && changes.defaultClipMode) {
+        updateClipModePopup(changes.defaultClipMode.newValue);
+    }
+});
+
+
+// Set the button up to match the stored setting when the add-on starts.
+refreshClipModePopup();
 
 // Add listener for status line in the message content tab
 browser.messageDisplay.onMessageDisplayed.addListener(async (tab, message) => {
