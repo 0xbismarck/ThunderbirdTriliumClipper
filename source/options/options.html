@@ -47,63 +47,51 @@
 
   <hr>
   
-  <!-- <h1>Message Attachments (Optional Feature)</h1>
-  <p>This optional feature allows saving files attached to an email message Obsidian.
-  <p>To use this feature, set the options below and then perform the steps described in 
-  "Attachment Permissions." -->
-  
-  <!-- <h2>Attachment Options</h2>
+  <h1>Message Attachments</h1>
+  <p>This optional feature saves the files attached to an email into Trilium Notes alongside
+  the clipped message. The files are sent straight to Trilium, so there is nothing to set up
+  in Thunderbird and no folder to choose.
+
+  <h2>Attachment Options</h2>
   <p>Enable saving email attachments with the option below.
-  
-  <form> 
+
+  <form>
     <label><b>Enable saving of email attachments</b></label>
     <input type="checkbox" id="attachmentSaveEnabled">
     <br>
     <button id="submit-attachmentSaveEnabled">Save</button>
     <button id="default-attachmentSaveEnabled">Restore Default</button>
-  </form>   -->
-  
-  
-  <!-- <h2>Attachment Save Folder</h2>
-  This parameter tells ObsidianClipper the location within the
-  vault where you will place clipped emails, relative to the Obsidian vault's root directory.
-  For example, setting this parameter to 'business/important emails/_resources' would place
-  your clipped emails into a '_resources' folder beneath 'business/important emails'
-  inside your vault. In this example, the location is beneath the Note Folder Path described above,
-  but you can place the attachment folder anywhere in your vault you wish.
-  <p>Links to the files will appear in list form in your note when you use the _MSGATTACHMENTLIST_
-  field in the Note Content Template as described below.
-  
-  <form>
-    <label><b>Store attachments for clipped emails in this folder in the Obsidian vault</b></label>
-    <input type="text" id="attachmentFolderPath">
-    <button id="submit-attachmentFolderPath">Save</button>
-    <button id="default-attachmentFolderPath">Restore Default</button>
   </form>
-   -->
-  <!-- <h2>Attachment Permissions</h2>
-  In order to save the attachment files from emails, you will need to set the default save location
-  for the Thunderbird application. Do that by following the steps below.
+
+  <h2>Attachment Storage</h2>
+  <p>Trilium Notes can hold a file in two ways, and this option chooses which of them is used
+  for the files attached to a clipped email.
   <ul>
-    <li>In the main Thunderbird window, click on the 'Tools' window and then the 'Settings' option. This will open the Settings Tab.</li>
-    <li>From the Settings Tab, make sure the 'General' selector is highlighted on the left side. Then scroll down to the 
-        'Files & Attachments' section. You could also type 'Files & Settings' into the search box at the right top of the Settings tab
-        to find this setting.</li>
-    <li>Click on the 'Save Files To' option and then click on the 'Browse' button.</li>
-    <li>Navigate to the folder for saving attachments recorded above. In the example above, this would be the 'business/important emails/_resources' folder.</li>
-    <li>Alternately, if you regularly save attachment files to other locations in the course of your normal workflow and do not want those
-        other files saved into your Trilium vault, you could instead click the 
-        'Always ask me where to save files' option. In doing so, though, you will need to manually navigate to the Attachment Save Folder
-        whenever clipping an email with any attachments.</li>
+    <li><b>Attachments of the note</b> - The files are stored as attachments of the clipped
+        email's note. They do not appear in the note tree, and are reached through the
+        note's "Attachments" tab.</li>
+    <li><b>Child notes of the note</b> - Each file becomes a note of its own beneath the
+        clipped email's note. The files appear in the note tree, so they can be moved,
+        cloned, and linked to like any other note.</li>
   </ul>
-  Note that it is important to correctly set both Thunderbird's file save location and the path specified in the 'Attachment Save Folder'
-  section above. Incorrectly setting them will cause the attachment links in the _MSGATTACHMENTLIST_ field to point at the
-  wrong location.
-  <p>For more details and a detailed guide to setting up attachmetns for TriliumClipper, please visit the 
-    <a href="https://github.com/KNHaw/ThunderbirdTriliumClipper/blob/main/docs/user-guide.md">online User Guide</a>.
-  
+  <p>Images are stored so that Trilium displays them, and all other files are stored so that
+  Trilium offers them for download.
+
+  <form>
+    <label><b>Store the files attached to a clipped email as</b></label>
+    <select id="attachmentStorageMode">
+      <option value="attachment">Attachments of the note</option>
+      <option value="childnote">Child notes of the note</option>
+    </select>
+    <br>
+    <button id="submit-attachmentStorageMode">Save</button>
+    <button id="default-attachmentStorageMode">Restore Default</button>
+  </form>
+
+  <p>The names of the saved files can be listed in the note itself by using the
+  <b>_MSGATTACHMENTLIST</b> placeholder in the Note Content Template described below.
+
   <hr>
-   -->
   <h1>Default Clip Format</h1>
   Messages can be clipped as plain text, as HTML, as both of them in one note, or as a PDF file.
   Choose below which of those formats the Trilium button above a message clips in.
@@ -118,9 +106,8 @@
   first, cannot be clipped.
   <p>One of the features of HTML email is the ability to embed graphical images within the message.
   Clipping those images as part of an HTML clip needs the optional <i>Message Attachments</i>
-  feature described above to be enabled and the <i>Attachments folder</i> to be set up. Other HTML
-  content (character formatting, images hosted on the internet, HTML lists, etc) is still supported
-  even if this is not the case.
+  feature described above to be enabled. Other HTML content (character formatting, images hosted
+  on the internet, HTML lists, etc) is still supported even if this is not the case.
 
   <form>
     <label><b>Clip messages in this format by default</b></label>
@@ -166,7 +153,7 @@
                 See the <a href="https://github.com/KNHaw/ThunderbirdObsidianClipper/blob/main/docs/user-guide.md">User Guide</a> for an example.</li>-->
             </ul>
         <li><b>_MSGAUTHOR</b> - The message author.</li>
-        <!-- <li><b>_MSGATTACHMENTLIST</b> - A markdown list of links to message attachments saved to Trilium Notes. If no message attachments were saved, returns the string "none."</li> -->
+        <li><b>_MSGATTACHMENTLIST</b> - A list of the message attachments saved to Trilium Notes. If no message attachments were saved, returns the string "none."</li>
         <li><b>_MSGIDURI</b> - A URI that can be clicked to open the message.</li>
             <ul><li>For example, combining the text in the field 'Message Link Text' _MSGURI will create a link in your note that when clicked will open the email in your client.</li></ul>
         <li><b>_MSGCONTENT</b> - The actual text content of the message.</li>

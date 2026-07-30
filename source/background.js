@@ -24,6 +24,11 @@ console.log("DEBUG - background.js is running!!!");
 // Global constants
 const STATUSLINE_PERSIST_MS = 10000;    // Delete status line messgaes after indicated time
 
+// Ways a message's attachments can be stored on the note the message is clipped
+// into. These strings are shared with the Options page.
+const ATTACHMENTMODE_ATTACHMENT = "attachment";  // Store as attachments of the note
+const ATTACHMENTMODE_CHILDNOTE  = "childnote";   // Store as child notes of the note
+
 // Modes describing the format a message is clipped in. These strings are shared
 // with the popup menu and with the default clip mode stored by the Options page.
 const CLIPMODE_PLAINTEXT = "plaintext";  // Clip the plain text part of the message
@@ -193,83 +198,247 @@ async function readTextSelection(tabId) {
 // Attachments Configuration
 /////////////////////////////
 
-// Function to clip and save a message's attachments.
-// Returns a string suitable for the _MSGATTACHMENTLIST field. Either a newline and list
-// of attachments in the vault or "none" if no attachments on the message.
-// Note that attachmentFolderPath must be an absolute position in the vault and begin with "/"
-async function saveAttachments(messageId, attachmentFolderPath,
-    attachmentSaveEnabled, contentIdToFilenameMap) {
-    
-    var attachmentList = "";        // Returned markdown formatted list
-    var attachmentCount = 0;        // Count attachments as they're saved
-    var attachmentCountTotal = 0;   // Total count of attachments in this mail message
-    
-    // Get attachments
-    let attachments = await browser.messages.listAttachments(messageId);
-    attachmentCountTotal = attachments.length;  // Count, starting from one instead of zero
-    
-    // Process the attachments
-    if(false == attachmentSaveEnabled){
-        // No attachments. Return "none"
-        attachmentList = "none";
-    } else {
-        
-        // Step through the attachments
-        for (let att of attachments) {
-            // Get the attached file.
-            let file = await browser.messages.getAttachmentFile(messageId, att.partName);
-            let filename = file.name;
-            let fileType = file.type;
-            let contentId = att.contentId;  // Optional field - be sure to verify it exists before use
-            
-            console.log("Getting attachment " + filename + ", type " + fileType);
-            
-            let flobUrl = URL.createObjectURL(file);
-            
-            var imgId = await browser.downloads.download({
-              url: flobUrl,
-              filename: filename,
-              conflictAction: "uniquify",
-              saveAs:false
-            });
-            
-            // Check to see if the write operation worked.
-            let fileDownloadStatus = await browser.downloads.search({id:imgId});
-            // TODO - throw error on download fail.
+// Function to work out the role Trilium stores an attachment under. Trilium only
+// accepts "image" or "file", and shows attachments in the "image" role inline.
+function attachmentRoleForType(fileType) {
+    let role = "file";
 
-            console.log("Downloaded attachment " + fileDownloadStatus[0].filename);
-            
-            // To find the filename, take the full file path of the attachment and (if needed) convert it 
-            // to a UNIX-like path (slashes instead of backslashes). Then take the last part of it.
-            let fileNameAsWritten = fileDownloadStatus[0].filename.replaceAll(/\\/g, "/").split("/").pop();
-            
-            // Log file as saved
-            attachmentCount = attachmentCount + 1;
-            var attachmentSaveSuccessMsg = "Saved attachment file '"+ filename + "' (" + attachmentCount + " of " + attachmentCountTotal + ")";
-            console.log(attachmentSaveSuccessMsg);
-            await displayStatusText(attachmentSaveSuccessMsg);
-            
-            // Append link to attachment file list
-            attachmentList += "\n - [" + fileNameAsWritten + "](" + attachmentFolderPath + "/" + fileNameAsWritten + ")";
-            
-            // If the content ID field is used, map the content ID to the file path
-            if(contentId) {
-                contentIdToFilenameMap[contentId] = attachmentFolderPath + "/" + fileNameAsWritten;
-                }
-            
-            }
+    if((undefined != fileType) && fileType.startsWith("image/")) {
+        role = "image";
     }
-    
-    // If no attachments clipped, correct list to read "none"
-    if("" == attachmentList) {
-        attachmentList = "none";
-    }
-    
-    // Report completed number of attachments
-    return attachmentList;
+
+    return role;
 }
 
 
+// Function to store one file on a note as a Trilium attachment of that note.
+// Trilium carries attachment content as JSON, which cannot hold the file's binary
+// data, so this creates the attachment and then PUTs the file to its content
+// endpoint. Returns the attachmentId, or null if the file could not be stored.
+async function uploadNoteAttachment(fileBytes, filename, fileType, noteId, triliumdb, headers) {
+
+    let uploadInfo = { abortController: new AbortController() };
+
+    // Create the attachment record. The content is a placeholder replaced below.
+    let createFetchInfo = {
+        mode: "cors",
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            ownerId: noteId,
+            role: attachmentRoleForType(fileType),
+            mime: fileType,
+            title: filename,
+            content: "placeholder"
+        }),
+        signal: uploadInfo.abortController.signal,
+    };
+
+    let response = await fetch(triliumdb + "/attachments", createFetchInfo);
+    let json = await response.json();
+
+    // Stop here if the attachment record could not be created.
+    if(!response.ok) {
+        console.log("failure creating attachment - " + json.message);
+        return null;
+    }
+
+    let attachmentId = json.attachmentId;
+
+    // Now send the file itself as the attachment's content.
+    let contentHeaders = {
+        "authorization": headers["authorization"],
+        "content-type": "application/octet-stream"
+    };
+
+    let contentFetchInfo = {
+        mode: "cors",
+        method: "PUT",
+        headers: contentHeaders,
+        body: fileBytes,
+        signal: uploadInfo.abortController.signal,
+    };
+
+    let contentResponse = await fetch(triliumdb + "/attachments/" + attachmentId + "/content",
+        contentFetchInfo);
+
+    // The content endpoint replies 204 with no body on success.
+    if(!contentResponse.ok) {
+        console.log("failure uploading attachment content, status " + contentResponse.status);
+        return null;
+    }
+
+    return attachmentId;
+}
+
+
+// Function to store one file beneath a note as a child note of its own. Trilium
+// holds files in notes of type "file", which are created the same way as the
+// attachments above. Returns the child note's noteId, or null on failure.
+async function uploadChildNoteAttachment(fileBytes, filename, fileType, noteId, triliumdb, headers) {
+
+    let uploadInfo = { abortController: new AbortController() };
+
+    // Store images as image notes so Trilium displays them, and everything else
+    // as a file note.
+    let noteType = "file";
+    if("image" == attachmentRoleForType(fileType)) {
+        noteType = "image";
+    }
+
+    // Create the child note. The content is a placeholder replaced below.
+    let createFetchInfo = {
+        mode: "cors",
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            parentNoteId: noteId,
+            title: filename,
+            type: noteType,
+            mime: fileType,
+            content: "placeholder"
+        }),
+        signal: uploadInfo.abortController.signal,
+    };
+
+    let response = await fetch(triliumdb + "/create-note", createFetchInfo);
+    let json = await response.json();
+
+    // Stop here if the child note could not be created.
+    if(!response.ok) {
+        console.log("failure creating attachment note - " + json.message);
+        return null;
+    }
+
+    let childNoteId = json.note.noteId;
+
+    // Now send the file itself as the note's content.
+    let contentHeaders = {
+        "authorization": headers["authorization"],
+        "content-type": "application/octet-stream"
+    };
+
+    let contentFetchInfo = {
+        mode: "cors",
+        method: "PUT",
+        headers: contentHeaders,
+        body: fileBytes,
+        signal: uploadInfo.abortController.signal,
+    };
+
+    let contentResponse = await fetch(triliumdb + "/notes/" + childNoteId + "/content", contentFetchInfo);
+
+    // The content endpoint replies 204 with no body on success.
+    if(!contentResponse.ok) {
+        console.log("failure uploading attachment note content, status " + contentResponse.status);
+        return null;
+    }
+
+    // Label the note with the original filename so Trilium offers it on download.
+    let labelFetchInfo = {
+        mode: "cors",
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            noteId: childNoteId,
+            type: "label",
+            name: "originalFileName",
+            value: filename
+        }),
+        signal: uploadInfo.abortController.signal,
+    };
+    await addNoteAttribute(labelFetchInfo, triliumdb);
+
+    return childNoteId;
+}
+
+
+// Function to build the list of a message's attachments for the note's
+// _MSGATTACHMENTLIST field. Returns an HTML list of the filenames, or "none" when
+// the message carries no attachments or saving them is disabled.
+//
+// This only names the files. They are stored in Trilium by saveAttachments()
+// below, which runs once the note they are stored on has been created.
+async function listAttachmentNames(messageId, attachmentSaveEnabled) {
+
+    var attachmentList = "";
+
+    // Report no attachments if the user has not enabled saving them.
+    if(false == attachmentSaveEnabled) {
+        return "none";
+    }
+
+    let attachments = await browser.messages.listAttachments(messageId);
+
+    for (let att of attachments) {
+        attachmentList += "<li>" + sanitizeEmailHtml(att.name) + "</li>";
+    }
+
+    // If the message has no attachments, report that instead of an empty list.
+    if("" == attachmentList) {
+        return "none";
+    }
+
+    return "<ul>" + attachmentList + "</ul>";
+}
+
+
+// Function to clip a message's attachments into Trilium, storing them on the
+// note that the message was clipped into.
+//
+// Each file is stored either as an attachment of that note or as a child note
+// beneath it, as chosen by attachmentStorageMode.
+async function saveAttachments(messageId, noteId, attachmentSaveEnabled,
+    attachmentStorageMode, triliumdb, headers) {
+
+    var attachmentCount = 0;        // Count attachments as they're saved
+    var attachmentCountTotal = 0;   // Total count of attachments in this mail message
+
+    // Nothing to do if the user has not enabled saving attachments.
+    if(false == attachmentSaveEnabled) {
+        return;
+    }
+
+    // Get attachments
+    let attachments = await browser.messages.listAttachments(messageId);
+    attachmentCountTotal = attachments.length;  // Count, starting from one instead of zero
+
+    // Step through the attachments
+    for (let att of attachments) {
+        // Get the attached file.
+        let file = await browser.messages.getAttachmentFile(messageId, att.partName);
+        let filename = file.name;
+        let fileType = file.type;
+
+        console.log("Getting attachment " + filename + ", type " + fileType);
+
+        // Read the file so its bytes can be sent to Trilium.
+        let fileBytes = await file.arrayBuffer();
+
+        // Store the file in the way the user has asked for.
+        let storedId = null;
+        if(ATTACHMENTMODE_CHILDNOTE == attachmentStorageMode) {
+            storedId = await uploadChildNoteAttachment(fileBytes, filename, fileType,
+                noteId, triliumdb, headers);
+        } else {
+            storedId = await uploadNoteAttachment(fileBytes, filename, fileType,
+                noteId, triliumdb, headers);
+        }
+
+        // Report the file, and skip it in the list if it could not be stored.
+        attachmentCount = attachmentCount + 1;
+        if(null == storedId) {
+            var attachmentSaveFailMsg = "Could not save attachment file '" + filename + "'";
+            console.log(attachmentSaveFailMsg);
+            await displayStatusText(attachmentSaveFailMsg);
+            continue;
+        }
+
+        var attachmentSaveSuccessMsg = "Saved attachment file '"+ filename + "' (" + attachmentCount + " of " + attachmentCountTotal + ")";
+        console.log(attachmentSaveSuccessMsg);
+        await displayStatusText(attachmentSaveSuccessMsg);
+    }
+}
 
 
 ///////////////////////////
@@ -291,7 +460,7 @@ function replaceUnicodeChar(c, defaultReplace="") {
 
 // Function to extract text from a message object (specifically, a messagePart object),
 // then recurse through any part[] arrays beneath that for more text.
-function buildMessageBody(msgPart, maxEmailSize, contentIdToFilenameMap)
+function buildMessageBody(msgPart, maxEmailSize)
 {
     console.log("background.js - buildMessageBody -  msgPart.contentType=" +  msgPart.contentType);
         
@@ -309,7 +478,7 @@ function buildMessageBody(msgPart, maxEmailSize, contentIdToFilenameMap)
         // Loop through all elements of the parts[] array
         for (let i = 0; i < msgPart.parts.length; ++i) {
             // For each of those elements, add element's .body, if it exists
-            buildMessageBody(msgPart.parts[i], maxEmailSize, contentIdToFilenameMap);
+            buildMessageBody(msgPart.parts[i], maxEmailSize);
         }
     }
     
@@ -568,8 +737,8 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
     let triliumParentNoteId = ""
     let noteTitleTemplate = "";
     let noteTemplate = "";
-    let attachmentFolderPath = "";
     let attachmentSaveEnabled = false;
+    let attachmentStorageMode = ATTACHMENTMODE_ATTACHMENT;
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
     let messageLinkText = ""
     // Log that we're clipping the message
@@ -592,8 +761,8 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             // Load parameters from storage
             noteTitleTemplate = storedParameters["noteFilenameTemplate"];
             noteTemplate = storedParameters["noteContentTemplate"];
-            attachmentFolderPath = storedParameters["attachmentFolderPath"];
             attachmentSaveEnabled = storedParameters["attachmentSaveEnabled"];
+            attachmentStorageMode = storedParameters["attachmentStorageMode"];
             maxEmailSize = storedParameters["maxEmailSize"];
             triliumdb = storedParameters["triliumdb"];
             triliumToken = storedParameters["triliumToken"];
@@ -602,7 +771,7 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
 
             // Correct any parameters the won't cause fatal errors when missing
             // by giving them default values.
-            if(undefined == attachmentFolderPath) {attachmentFolderPath = "";}
+            if(undefined == attachmentStorageMode) {attachmentStorageMode = ATTACHMENTMODE_ATTACHMENT;}
             
             // Correct any parameters requiring additional processing
             if((undefined == maxEmailSize) || (NaN == parseInt(maxEmailSize))){            
@@ -656,11 +825,11 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
     // }
     // console.log("MSG Tag List - " + messageTagList)
     
-    // Save message attachments and get a markdown list with links to them and a map of content-id to the files.
-    const contentIdToFilenameMap = [];
-    attachmentList = await saveAttachments(message.id, attachmentFolderPath, 
-        attachmentSaveEnabled, contentIdToFilenameMap);
-    
+    // Build the list of attachment names for the note's _MSGATTACHMENTLIST field.
+    // The files themselves are stored once the note exists, further down, because
+    // storing them needs the ID of the note they are stored on.
+    let attachmentList = await listAttachmentNames(message.id, attachmentSaveEnabled);
+
     // Extract message body text from the message. First, see if user
     // selected specific text to be saved.
     // TODO - Make this handle HTML.
@@ -677,10 +846,8 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
         // that Trilium preserves its line breaks and does not read it as markup.
         messageBody = formatPlainTextAsHtml(messageBody);
     } else {
-        //messageBody = buildMessageBody(full, maxEmailSize, contentIdToFilenameMap);
-
         // Get the message text
-        buildMessageBody(full, maxEmailSize, contentIdToFilenameMap);
+        buildMessageBody(full, maxEmailSize);
 
         // The clip mode the user picked is the only thing deciding the format of
         // the note. Build the body in that format.
@@ -784,6 +951,13 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             // Tag and label the note as the text clip path does.
             if(null != pdfNoteId) {
                 labelNewNote(message, pdfNoteId, triliumdb, headers);
+
+                // Store the message's attachments on the PDF note, as the text
+                // clip path does. The PDF holds the rendered message only, so the
+                // attached files still have to be stored separately.
+                await saveAttachments(message.id, pdfNoteId, attachmentSaveEnabled,
+                    attachmentStorageMode, triliumdb, headers);
+
                 await displayStatusText("TriliumClipper: Message clipped as PDF.");
             }
         }
@@ -826,6 +1000,12 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             // console.log("Trilium Result: " + json.note.noteId);
             labelNewNote(message, json.note.noteId, triliumdb, headers);
             updateNoteIcon(json.note.noteId, triliumdb, headers); // @TODO - updating this configurable
+
+            // Store the message's attachments on the note just created. This is
+            // done here because storing them needs the new note's ID.
+            await saveAttachments(message.id, json.note.noteId, attachmentSaveEnabled,
+                attachmentStorageMode, triliumdb, headers);
+
             await displayStatusText("TriliumClipper: Message clipped.");
         }
         else {

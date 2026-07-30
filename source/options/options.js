@@ -36,8 +36,8 @@ function onError(error) {
 // Set up array of default parameters for each HTML field.
 // remember to assign listeners to any new field (below)
 var defaultParameters = [];
-defaultParameters["attachmentFolderPath"] = "ClippedEmails/_resources";
 defaultParameters["attachmentSaveEnabled"] = false;
+defaultParameters["attachmentStorageMode"] = "attachment";
 defaultParameters["noteFilenameTemplate"] = "Email (_MSGDATE) : _MSGSUBJECT";
 defaultParameters["noteContentTemplate"] = 
     "Created: _NOTEDATE, _NOTETIME\n" +
@@ -47,7 +47,7 @@ defaultParameters["noteContentTemplate"] =
     "Recipients: _MSGRECIPENTS\n" +
     "CC: _MSGCC\n" +
     "BCC: _MSGBCC\n" +
-    // "Attachments: _MSGATTACHMENTLIST\n" +
+    "Attachments: _MSGATTACHMENTLIST\n" +
     "_MSGIDURI\n\n" +
     "---\n\n" +
     "_MSGCONTENT";
@@ -170,12 +170,11 @@ document.getElementById('submit-parentNoteId').onclick = function() {storeOption
 document.getElementById('default-parentNoteId').onclick = function() {storeDefault("parentNoteId"); };
 
 
-// As a radio button array, attachment save mode submits/defaults all three buttons at once.
-// document.getElementById('submit-attachmentSaveEnabled').onclick = function() {storeOption("attachmentSaveEnabled"); };    
-// document.getElementById('default-attachmentSaveEnabled').onclick = function() {storeDefault("attachmentSaveEnabled"); };
+document.getElementById('submit-attachmentSaveEnabled').onclick = function() {storeOption("attachmentSaveEnabled"); };
+document.getElementById('default-attachmentSaveEnabled').onclick = function() {storeDefault("attachmentSaveEnabled"); };
 
-// document.getElementById('submit-attachmentFolderPath').onclick = function() {storeOption("attachmentFolderPath"); };
-// document.getElementById('default-attachmentFolderPath').onclick = function() {storeDefault("attachmentFolderPath"); };
+document.getElementById('submit-attachmentStorageMode').onclick = function() {storeOption("attachmentStorageMode"); };
+document.getElementById('default-attachmentStorageMode').onclick = function() {storeDefault("attachmentStorageMode"); };
 
 document.getElementById('submit-defaultClipMode').onclick = function() {storeOption("defaultClipMode"); };
 document.getElementById('default-defaultClipMode').onclick = function() {storeDefault("defaultClipMode"); };
