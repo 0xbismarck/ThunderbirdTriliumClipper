@@ -26,7 +26,9 @@
 
 
 // Load the modules this API needs. Thunderbird 115 and later provide these as
-// ES modules, while earlier releases provide them as JSMs.
+// ES modules. The add-on requires 115, so the JSM branch below is only a
+// safeguard for a sideloaded install on an older release; PDF clipping refuses
+// to run on those anyway, see the check in generate().
 var ExtensionCommon;
 var FileUtils;
 
@@ -76,6 +78,17 @@ var NativePdf = class extends ExtensionCommon.ExtensionAPI {
                         throw new Error("The message browser has no browsing context");
                     }
 
+                    // Check that this build can be told to print to a file before
+                    // any print settings are touched. Builds without
+                    // kOutputDestinationFile ignore the outputDestination
+                    // assignment below rather than refusing it, which would leave
+                    // the settings pointed at a real printer and quietly send the
+                    // message there. Refuse to print at all rather than risk that.
+                    if (undefined === Ci.nsIPrintSettings.kOutputDestinationFile) {
+                        throw new Error("This version of Thunderbird cannot print to a file. " +
+                            "Clipping a message as a PDF needs Thunderbird 115 or later.");
+                    }
+
                     // Build the print settings that render to a PDF file rather
                     // than sending the message to a physical printer.
                     const printSettings = Cc["@mozilla.org/gfx/printsettings-service;1"]
@@ -84,6 +97,13 @@ var NativePdf = class extends ExtensionCommon.ExtensionAPI {
 
                     printSettings.outputDestination = Ci.nsIPrintSettings.kOutputDestinationFile;
                     printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
+
+                    // Confirm the assignment took. If it did not, this build does
+                    // not honour outputDestination and would print to a printer.
+                    if (Ci.nsIPrintSettings.kOutputDestinationFile !== printSettings.outputDestination) {
+                        throw new Error("Thunderbird did not accept printing to a file. " +
+                            "Clipping a message as a PDF needs Thunderbird 115 or later.");
+                    }
 
                     // Leave the printer name empty so that nothing is sent to a printer.
                     printSettings.printerName = "";

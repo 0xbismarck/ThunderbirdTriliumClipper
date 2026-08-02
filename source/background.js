@@ -24,6 +24,11 @@ console.log("DEBUG - background.js is running!!!");
 // Global constants
 const STATUSLINE_PERSIST_MS = 10000;    // Delete status line messgaes after indicated time
 
+// Ways a message's attachments can be stored on the note the message is clipped
+// into. These strings are shared with the Options page.
+const ATTACHMENTMODE_ATTACHMENT = "attachment";  // Store as attachments of the note
+const ATTACHMENTMODE_CHILDNOTE  = "childnote";   // Store as child notes of the note
+
 // Modes describing the format a message is clipped in. These strings are shared
 // with the popup menu and with the default clip mode stored by the Options page.
 const CLIPMODE_PLAINTEXT = "plaintext";  // Clip the plain text part of the message
@@ -38,11 +43,6 @@ const CLIPMODE_ASK       = "ask";
 // Path to the menu listing the clip formats, shown when the default clip mode
 // is CLIPMODE_ASK. An empty path means the button clips without asking.
 const CLIPMODE_POPUP_PATH = "messagePopup/popup.html";
-
-// Ways a message's attachments can be stored on the note the message is clipped
-// into. These strings are shared with the Options page.
-const ATTACHMENTMODE_ATTACHMENT = "attachment";  // Store as attachments of the note
-const ATTACHMENTMODE_CHILDNOTE  = "childnote";   // Store as child notes of the note
 
 // Global, persistant variables.
 var latestMsgDispTab = 1;       // Latest tab recorded on an incoming onMessageDisplay event. Used for later reference.
@@ -879,7 +879,6 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
     let noteTemplate = "";
     let attachmentSaveEnabled = false;
     let attachmentStorageMode = ATTACHMENTMODE_ATTACHMENT;
-    let htmlClippingEnabled = true;
     let maxEmailSize = Number.MAX_SAFE_INTEGER;
     let messageLinkText = ""
     // Log that we're clipping the message
@@ -905,7 +904,6 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             attachmentSaveEnabled = storedParameters["attachmentSaveEnabled"];
             attachmentStorageMode = storedParameters["attachmentStorageMode"];
             maxEmailSize = storedParameters["maxEmailSize"];
-            htmlClippingEnabled = storedParameters["htmlClippingEnabled"];
             triliumdb = storedParameters["triliumdb"];
             triliumToken = storedParameters["triliumToken"];
             triliumParentNoteId = storedParameters["parentNoteId"];
@@ -994,22 +992,12 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
         // that Trilium preserves its line breaks and does not read it as markup.
         messageBody = formatPlainTextAsHtml(messageBody);
     } else {
-        //messageBody = buildMessageBody(full, maxEmailSize);
-
         // Get the message text
         buildMessageBody(full, maxEmailSize);
 
-        // The clip mode the user picked decides the format of the note. The older
-        // 'Enable HTML Content Clipping' option still applies when the user asked
-        // for HTML, so unchecking it clips plain text as it always has.
-        let effectiveClipMode = clipMode;
-        if((CLIPMODE_HTML == effectiveClipMode) && (false == htmlClippingEnabled)) {
-            console.log("clipEmail: HTML clipping disabled in options, clipping plain text");
-            effectiveClipMode = CLIPMODE_PLAINTEXT;
-        }
-
-        // Build the body in the requested format.
-        messageBody = composeMessageBody(effectiveClipMode);
+        // The clip mode the user picked is the only thing deciding the format of
+        // the note. Build the body in that format.
+        messageBody = composeMessageBody(clipMode);
     }
     console.log("background.js - clipEmail - messageBody: " + messageBody);
     
@@ -1110,8 +1098,9 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             if(null != pdfNoteId) {
                 labelNewNote(message, pdfNoteId, triliumdb, headers);
 
-                // Store the message's attachments on the note just created, as the
-                // text clip path does.
+                // Store the message's attachments on the PDF note, as the text
+                // clip path does. The PDF holds the rendered message only, so the
+                // attached files still have to be stored separately.
                 await saveAttachments(message.id, pdfNoteId, attachmentSaveEnabled,
                     attachmentStorageMode, triliumdb, headers);
 

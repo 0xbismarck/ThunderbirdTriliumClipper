@@ -40,7 +40,7 @@ A message can be clipped in any of the formats below. Which one is used, and whe
 - *Plain Text* - Clips the plain text version of the message. Formatting, images, and links are dropped, but the text is preserved exactly as it was laid out in the email.
 - *HTML* - Clips the formatted HTML version of the message, keeping its styling and links. This is the format used by previous versions of the add-on.
 - *Plain Text and HTML* - Clips both versions into a single note, one after the other, separated by a horizontal rule.
-- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable.
+- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable. This format needs Thunderbird 115 or later.
 
 If a message does not contain the version you asked for (for example, a plain text only email clipped as HTML), the add-on falls back to the version the message does contain.
 
@@ -65,6 +65,8 @@ There are a number of options that a user can use to configure the clipper add-o
 - *ParentNoteId* - Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
 ![NoteId](./noteID.png)
 - *Default Clip Format* - Controls what the "Trilium" button does. Set it to *Ask every time* to have the button open a menu where you choose the format for each message. Set it to Plain Text, HTML, Plain Text and HTML, or PDF to have the button clip in that format straight away, without showing the menu. This setting is also the format used when a message is clipped from the message list right-click menu, which never shows the menu; clips made that way use HTML while the setting is *Ask every time*.
+
+    *Default Clip Format* replaces the *Enable HTML Content Clipping* checkbox found in earlier versions, which has been removed. The old setting is not carried over, so if you had unticked it to clip plain text, set *Default Clip Format* to *Plain Text* to get that behavior back.
 
 - *Message Attachments (Optional Feature)* - To save the files attached to an email into Trilium Notes alongside the clipped message, set the checkbox labeled "Enable saving of email attachments" and save the setting. The files are sent straight to Trilium Notes, so there is nothing to configure in Thunderbird and no folder to choose.
     - *Attachment Storage* - Chooses how Trilium Notes holds the saved files. Setting this to "Attachments of the note" stores them as attachments of the clipped email's note, reached through that note's "Attachments" tab. Setting it to "Child notes of the note" makes each file a note of its own beneath the clipped email's note, so the files appear in the note tree and can be moved, cloned, and linked to like any other note.
@@ -115,11 +117,18 @@ For example, if your compose file maps `8080` like:
 then set the clipper base URL to:
 `http://[IP-Address]:8080/etapi`
 
-<!-- ### Unable to Save Email Attachments
-The attachment clipping feature was added in ObsidianClipper version v4.1 in July of 2024. It is unclear what, if any
-problems that users might encounter using this feature. If you have a problem, please 
-[file an issue on GitHub](https://github.com/KNHaw/ThunderbirdObsidianClipper/issues) so the development team can assist you and 
-update this User Guide to refelct the solutions that were found. -->
+### Attachments Are Missing
+If you clip an email that has files attached to it but those files do not turn up in Trilium Notes, check the following.
+
+Saving attachments is off by default. Open the add-on's Options tab, make sure the checkbox labeled "Enable saving of email attachments" is ticked, and press the Save button beneath it. Attachments are only saved for emails clipped after this setting has been saved, so clip the email again afterwards.
+
+If the setting is enabled, the files may not be where you are looking for them. The *Attachment Storage* option decides where they go. With "Attachments of the note" the files do not appear in the note tree at all; open the clipped email's note and look under its "Attachments" tab. With "Child notes of the note" the files appear in the note tree beneath the clipped email's note, so expand that note to see them.
+
+Embedded images in an HTML email are handled by this same feature. If an email's pictures are missing from the clipped note while the rest of the message came across correctly, the attachment saving feature is most likely disabled. Other HTML content, such as character formatting, HTML lists, and images hosted on the internet, does not depend on it.
+
+Finally, note that the *_MSGATTACHMENTLIST* placeholder only lists files that would be saved. If it reports "none" for an email you know has attachments, the feature is disabled rather than failing.
+
+If attachments are still missing after all of the above, [capture a debug log](#Capturing-a-Debug-Log) and [file an issue on GitHub](https://github.com/0xbismarck/ThunderbirdTriliumClipper/issues) so the problem can be looked into.
 
 
 ### Note Content Corrupted or Missing
