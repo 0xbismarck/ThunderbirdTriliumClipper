@@ -953,7 +953,7 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
     // let messageTagList = "#email";
     // if(undefined != message.tags) {
     //     // Get a master list of tags known by Thunderbird
-    //     let knownTagArray = await messenger.messages.listTags();
+    //     let knownTagArray = await messenger.messages.tags.list();
         
     //     // Loop through the tags on the email and find any matches
     //     for (var currMsgTagKeyString of message.tags) {
@@ -1174,11 +1174,11 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
     let uploadInfo = { abortController: new AbortController() };
     
     if(undefined != message.tags) {
-        // Get a master list of tags known by Thunderbird
-        // Note: listTags() is used in preference to the newer messages.tags.list(),
-        // which was only added in Thunderbird 121. Both return the same tag records,
-        // and using this one lets the add-on support Thunderbird 88 and later.
-        let knownTagArray = await messenger.messages.listTags();
+        // Get a master list of tags known by Thunderbird.
+        // Note: this replaces the deprecated listTags(), which Mozilla dropped in
+        // Manifest V3. It was added in Thunderbird 121, which the add-on now asks
+        // for, and needs the messagesTagsList permission alongside messagesRead.
+        let knownTagArray = await messenger.messages.tags.list();
         
         // Loop through the tags on the email and find any matches
         for (var currMsgTagKeyString of message.tags) {

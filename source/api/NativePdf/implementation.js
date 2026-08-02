@@ -25,22 +25,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// Load the modules this API needs. Thunderbird 115 and later provide these as
-// ES modules. The add-on requires 115, so the JSM branch below is only a
-// safeguard for a sideloaded install on an older release; PDF clipping refuses
-// to run on those anyway, see the check in generate().
-var ExtensionCommon;
-var FileUtils;
-
-try {
-    // Thunderbird 115+ (ESM)
-    ({ ExtensionCommon } = ChromeUtils.importESModule("resource://gre/modules/ExtensionCommon.sys.mjs"));
-    ({ FileUtils } = ChromeUtils.importESModule("resource://gre/modules/FileUtils.sys.mjs"));
-} catch (e) {
-    // Older releases (JSM)
-    ({ ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm"));
-    ({ FileUtils } = ChromeUtils.import("resource://gre/modules/FileUtils.jsm"));
-}
+// Load the modules this API needs. The add-on requires Thunderbird 121, which
+// provides these as ES modules, so they are imported directly. The JSM loader
+// that older releases used was dropped by Mozilla and is not called here.
+var { ExtensionCommon } = ChromeUtils.importESModule("resource://gre/modules/ExtensionCommon.sys.mjs");
+var { FileUtils } = ChromeUtils.importESModule("resource://gre/modules/FileUtils.sys.mjs");
 
 
 var NativePdf = class extends ExtensionCommon.ExtensionAPI {
@@ -86,7 +75,7 @@ var NativePdf = class extends ExtensionCommon.ExtensionAPI {
                     // message there. Refuse to print at all rather than risk that.
                     if (undefined === Ci.nsIPrintSettings.kOutputDestinationFile) {
                         throw new Error("This version of Thunderbird cannot print to a file. " +
-                            "Clipping a message as a PDF needs Thunderbird 115 or later.");
+                            "Clipping a message as a PDF needs Thunderbird 121 or later.");
                     }
 
                     // Build the print settings that render to a PDF file rather
@@ -102,7 +91,7 @@ var NativePdf = class extends ExtensionCommon.ExtensionAPI {
                     // not honour outputDestination and would print to a printer.
                     if (Ci.nsIPrintSettings.kOutputDestinationFile !== printSettings.outputDestination) {
                         throw new Error("Thunderbird did not accept printing to a file. " +
-                            "Clipping a message as a PDF needs Thunderbird 115 or later.");
+                            "Clipping a message as a PDF needs Thunderbird 121 or later.");
                     }
 
                     // Leave the printer name empty so that nothing is sent to a printer.
