@@ -75,7 +75,7 @@ If TriliumClipper is not properly working, please take a moment to reread the in
 ## Limitations & Future Features
 TriliumClipper can clip a message as plain text, as HTML, as both, or as a PDF. See the *Usage* section above for what each format does and how to choose between them.
 
-Clipping a message as a PDF needs Thunderbird 115 or later and requires the message to be open, since the message has to be drawn before it can be printed.
+Clipping a message as a PDF needs Thunderbird 121 or later and requires the message to be open, since the message has to be drawn before it can be printed.
 
 Saving embedded images from an HTML email requires the optional attachment saving feature described above to be enabled.
 

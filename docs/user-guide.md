@@ -40,7 +40,7 @@ A message can be clipped in any of the formats below. Which one is used, and whe
 - *Plain Text* - Clips the plain text version of the message. Formatting, images, and links are dropped, but the text is preserved exactly as it was laid out in the email.
 - *HTML* - Clips the formatted HTML version of the message, keeping its styling and links. This is the format used by previous versions of the add-on.
 - *Plain Text and HTML* - Clips both versions into a single note, one after the other, separated by a horizontal rule.
-- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable. This format needs Thunderbird 115 or later.
+- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable. This format needs Thunderbird 121 or later.
 
 If a message does not contain the version you asked for (for example, a plain text only email clipped as HTML), the add-on falls back to the version the message does contain.
 
@@ -60,6 +60,7 @@ If you only wish to clip a portion of an email's text, select the text before pr
 There are a number of options that a user can use to configure the clipper add-on. These can be found on the Options tab for the add-on.
 
 - *Trilium URL* - The Trilium URL is the location where Trilium Notes sends data for the creation of a new note. By default, when Trilium Notes is installed on your local machine, it will receive the note on the localhost:port combination below. Otherwise you need to specifiy where Thunderbird needs to send data.
+    - *Access to the Trilium server* - TriliumClipper asks for access only to the server entered above, rather than to every website, so this access is granted by you instead of at install time. After saving the URL, press the "Grant Access" button beneath it and allow the access Thunderbird asks about. If you skip this, you will be asked the first time you clip a message. Changing the Trilium URL to a different server means granting access again.
 - *ETAPI Token* - Trilium Notes uses an authentication token to confirm that Thunderbird has permission to create notes. To generate an ETAPI token, you need to open Trilium Notes and click on the Trilium Notes icon in the upper left corner. Then click 'Options' -> 'ETAPI' -> 'Create New ETAPI Token'. After the token is created, store it in this field.
 - *ParentNoteId* - Thunderbird needs to know where in Trilium Notes the software should send the new note. The noteId for any note can be found by clicking the "Note Info" icon (the 'i' within a circle) towards the top of the note. After clicking the icon, you will see the field called "Note ID". Enter that value below.
 ![NoteId](./noteID.png)

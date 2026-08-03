@@ -154,14 +154,84 @@ function loadOptionsFields(storedParameters)
 }
 
 
+/////////////////////////////
+// Trilium host permission
+/////////////////////////////
+
+// Function to turn the configured Trilium URL into a match pattern covering just
+// that host. Returns "" if the URL cannot be read.
+function triliumOriginPattern(triliumdb) {
+
+    // Catch the error thrown by URL() when the configured address is not a URL.
+    try {
+        let triliumUrl = new URL(triliumdb);
+        return triliumUrl.protocol + "//" + triliumUrl.host + "/*";
+    } catch(e) {
+        onError("triliumOriginPattern - " + e);
+    }
+
+    return "";
+}
+
+
+// Function to show whether the add-on may contact the configured Trilium server.
+// The URL is read from the page rather than from storage so that the status
+// describes the same address the Grant Access button asks about.
+async function refreshTriliumHostPermissionStatus() {
+    var elem = document.getElementById("triliumHostPermissionStatus");
+    if((typeof elem === 'undefined') || (elem === null)) {
+        return;
+    }
+
+    let originPattern = triliumOriginPattern(document.getElementById("triliumdb").value);
+    if("" == originPattern) {
+        elem.innerText = "The Trilium URL above is not a valid address.";
+        return;
+    }
+
+    if(await browser.permissions.contains({ origins: [originPattern] })) {
+        elem.innerText = "Granted for " + originPattern;
+    } else {
+        elem.innerText = "Not granted for " + originPattern;
+    }
+}
+
+
+// Function to ask for access to the configured Trilium server. This is called
+// from a button press, because asking for a permission needs a user action.
+// Note that this reads the Trilium URL from the page rather than from storage.
+// Asking for a permission only works while handling a user's click, and any
+// await before the request ends that, leaving the request silently refused.
+function requestTriliumHostPermission() {
+    let originPattern = triliumOriginPattern(document.getElementById("triliumdb").value);
+
+    if("" == originPattern) {
+        refreshTriliumHostPermissionStatus();
+        return;
+    }
+
+    // Catch any errors thrown by request()
+    try {
+        // Call request() directly, without awaiting anything first, so the click
+        // is still in progress and Thunderbird shows the prompt.
+        browser.permissions.request({ origins: [originPattern] }).then(
+            function() { refreshTriliumHostPermissionStatus(); },
+            function(e) { onError("requestTriliumHostPermission - " + e); }
+        );
+    } catch(e) { onError("requestTriliumHostPermission - " + e); }
+}
+
+
 ///////////////////////
 // Main execution path
 ///////////////////////
 
 // Set up event listeners for option buttons.
 
-document.getElementById('submit-triliumdb').onclick = function() {storeOption("triliumdb"); };
-document.getElementById('default-triliumdb').onclick = function() {storeDefault("triliumdb"); };
+// Saving a new Trilium URL changes the host that access is needed for, so update
+// the permission status alongside it.
+document.getElementById('submit-triliumdb').onclick = function() {storeOption("triliumdb"); refreshTriliumHostPermissionStatus(); };
+document.getElementById('default-triliumdb').onclick = function() {storeDefault("triliumdb"); refreshTriliumHostPermissionStatus(); };
 
 document.getElementById('submit-triliumToken').onclick = function() {storeOption("triliumToken"); };
 document.getElementById('default-triliumToken').onclick = function() {storeDefault("triliumToken"); };
@@ -191,8 +261,20 @@ document.getElementById('default-noteContentTemplate').onclick = function() {sto
 document.getElementById('submit-maxEmailSize').onclick = function() {storeOption("maxEmailSize"); };
 document.getElementById('default-maxEmailSize').onclick = function() {storeDefault("maxEmailSize"); };
 
-// Get the stored parameters and pass them to a function to populate fields.
-browser.storage.local.get(null).then(loadOptionsFields, onError);
+document.getElementById('grant-triliumHostPermission').onclick = function(clickEvent) {
+    // Stop the button from submitting the form it sits in, which would reload the page
+    // and throw away the permission prompt.
+    clickEvent.preventDefault();
+    requestTriliumHostPermission();
+};
+
+// Get the stored parameters and pass them to a function to populate fields. The
+// permission status is shown afterwards, because it reads the Trilium URL from
+// the field that loadOptionsFields() fills in.
+browser.storage.local.get(null).then(function(storedParameters) {
+    loadOptionsFields(storedParameters);
+    refreshTriliumHostPermissionStatus();
+}, onError);
 
 
 

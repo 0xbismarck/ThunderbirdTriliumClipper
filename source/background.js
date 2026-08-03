@@ -138,6 +138,9 @@ async function displayConfirm(messageString) {
 
 // Function to display clip status
 // NOTE: Do not pass escaped quotes in messageString as they can hose the executeScrpt()
+// NOTE: Writing to the message being displayed needs the messagesModify permission.
+// Without it every status message is thrown away by the catch below and the user
+// is left with no sign of whether a message was clipped.
 async function displayStatusText(messageString) {
     console.log("displaying status text \"" + messageString + "\" in tab " + latestMsgDispTab);
     
@@ -155,7 +158,11 @@ async function displayStatusText(messageString) {
         
         // Schedule status line for removal after a given time.
         setTimeout(deleteStatusLine, STATUSLINE_PERSIST_MS, latestMsgDispTab);
-    } catch(e) { onError(e, ("displayStatusText - " + messageString)); }
+    } catch(e) {
+        // Report the failure rather than letting the status quietly disappear.
+        onError(e, ("displayStatusText - could not show \"" + messageString +
+            "\" in tab " + latestMsgDispTab));
+    }
 
 }
 
@@ -197,6 +204,78 @@ async function readTextSelection(tabId) {
 /////////////////////////////
 // Attachments Configuration
 /////////////////////////////
+
+// Content types worked out from a filename, used only when the message does not
+// say what type an attachment is.
+const fileTypeByExtension = {
+    "pdf":  "application/pdf",
+    "png":  "image/png",
+    "jpg":  "image/jpeg",
+    "jpeg": "image/jpeg",
+    "gif":  "image/gif",
+    "webp": "image/webp",
+    "svg":  "image/svg+xml",
+    "bmp":  "image/bmp",
+    "txt":  "text/plain",
+    "csv":  "text/csv",
+    "html": "text/html",
+    "htm":  "text/html",
+    "json": "application/json",
+    "xml":  "application/xml",
+    "zip":  "application/zip",
+    "doc":  "application/msword",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "xls":  "application/vnd.ms-excel",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "ppt":  "application/vnd.ms-powerpoint",
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "odt":  "application/vnd.oasis.opendocument.text",
+    "ods":  "application/vnd.oasis.opendocument.spreadsheet",
+    "ics":  "text/calendar",
+    "eml":  "message/rfc822",
+    "mp3":  "audio/mpeg",
+    "mp4":  "video/mp4",
+};
+
+// Generic content type used by email for "some sort of file". Attachments arrive
+// carrying it when the sending client did not work out what the file was, and
+// storing it would leave Trilium showing the file as unrecognised binary data.
+const GENERIC_FILE_TYPE = "application/octet-stream";
+
+
+// Function to work out the content type an attachment should be stored under.
+// The message's own attachment record is trusted first, then the File object,
+// and the filename is only read if neither of them names a usable type.
+function fileTypeForAttachment(att, file, filename) {
+
+    // Take the first type offered that is not the generic "some sort of file".
+    for (let candidate of [att.contentType, file.type]) {
+        if((undefined != candidate) && ("" != candidate)) {
+            // Content types can carry parameters, as in "text/plain; charset=utf-8".
+            let contentType = candidate.split(";")[0].trim().toLowerCase();
+
+            if(("" != contentType) && (GENERIC_FILE_TYPE != contentType)) {
+                return contentType;
+            }
+        }
+    }
+
+    // Neither said anything useful, so work the type out from the file's name.
+    let extension = "";
+    if(filename.includes(".")) {
+        extension = filename.split(".").pop().toLowerCase();
+    }
+
+    let extensionType = fileTypeByExtension[extension];
+    if(undefined != extensionType) {
+        console.log("Attachment '" + filename + "' has no content type, using " + extensionType);
+        return extensionType;
+    }
+
+    // Nothing identified the file, so store it as a plain binary file.
+    return GENERIC_FILE_TYPE;
+}
+
 
 // Function to work out the role Trilium stores an attachment under. Trilium only
 // accepts "image" or "file", and shows attachments in the "image" role inline.
@@ -408,7 +487,11 @@ async function saveAttachments(messageId, noteId, attachmentSaveEnabled,
         // Get the attached file.
         let file = await browser.messages.getAttachmentFile(messageId, att.partName);
         let filename = file.name;
-        let fileType = file.type;
+
+        // Take the content type from the message's own attachment record. The File
+        // returned above does not reliably carry one, and a missing type is stored
+        // by Trilium as a generic binary file rather than as the kind of file it is.
+        let fileType = fileTypeForAttachment(att, file, filename);
 
         console.log("Getting attachment " + filename + ", type " + fileType);
 
@@ -623,6 +706,63 @@ function getRecipients(msg, field, yamlFormat=false)
 
 
 
+/////////////////////////////
+// Trilium host permission
+/////////////////////////////
+
+// Function to turn the configured Trilium URL into a match pattern covering just
+// that host, so the add-on can ask for access to the user's own Trilium server
+// rather than to every site. Returns "" if the URL cannot be read.
+function triliumOriginPattern(triliumdb) {
+
+    // Catch the error thrown by URL() when the configured address is not a URL.
+    try {
+        let triliumUrl = new URL(triliumdb);
+        return triliumUrl.protocol + "//" + triliumUrl.host + "/*";
+    } catch(e) {
+        onError(e, ("triliumOriginPattern - " + triliumdb));
+    }
+
+    return "";
+}
+
+
+// Function to make sure the add-on is allowed to reach the user's Trilium server.
+// The host is not known until the user configures it, so access to it is asked
+// for the first time a message is clipped rather than when the add-on installs.
+// Returns true if the add-on may contact the server.
+async function ensureTriliumHostPermission(triliumdb) {
+
+    let originPattern = triliumOriginPattern(triliumdb);
+    if("" == originPattern) {
+        await displayAlert("TriliumClipper: The Trilium URL on the Options page is not a valid address.");
+        return false;
+    }
+
+    // Nothing to do if access to this host has already been granted.
+    if(await browser.permissions.contains({ origins: [originPattern] })) {
+        return true;
+    }
+
+    // Access has not been granted. Asking for it here would not work, because a
+    // permission can only be asked for while a click of the user's is being
+    // handled, and clipping a message does too much work before reaching this
+    // point for that to still be the case. Send the user to the Options page,
+    // where the "Grant Access" button asks for it from a click of its own.
+    console.log("No permission for " + originPattern + ", sending user to the Options page");
+
+    await displayAlert("TriliumClipper: TriliumClipper needs your permission to contact " +
+        originPattern + ". Open the Options page and press the Grant Access button, then clip the message again.");
+
+    // Catch any errors thrown by openOptionsPage()
+    try {
+        await browser.runtime.openOptionsPage();
+    } catch(e) { onError(e, "ensureTriliumHostPermission - openOptionsPage"); }
+
+    return false;
+}
+
+
 ///////////////////////////
 // PDF clipping functions
 ///////////////////////////
@@ -780,7 +920,13 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
                 maxEmailSize = parseInt(maxEmailSize);      // Set user defined limit
             }
         }
-    
+
+    // Make sure the add-on is allowed to reach the configured Trilium server
+    // before any work is done that would end up being thrown away.
+    if(false == await ensureTriliumHostPermission(triliumdb)) {
+        return;
+    }
+
     // Get the message currently displayed in the active tab, using the
     // messageDisplay API. Note: This needs the messagesRead permission.
     // The returned message is a MessageHeader object with the most relevant
@@ -807,7 +953,7 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
     // let messageTagList = "#email";
     // if(undefined != message.tags) {
     //     // Get a master list of tags known by Thunderbird
-    //     let knownTagArray = await messenger.messages.listTags();
+    //     let knownTagArray = await messenger.messages.tags.list();
         
     //     // Loop through the tags on the email and find any matches
     //     for (var currMsgTagKeyString of message.tags) {
@@ -1028,7 +1174,10 @@ async function labelNewNote(message, noteId, triliumdb, headers ) {
     let uploadInfo = { abortController: new AbortController() };
     
     if(undefined != message.tags) {
-        // Get a master list of tags known by Thunderbird
+        // Get a master list of tags known by Thunderbird.
+        // Note: this replaces the deprecated listTags(), which Mozilla dropped in
+        // Manifest V3. It was added in Thunderbird 121, which the add-on now asks
+        // for, and needs the messagesTagsList permission alongside messagesRead.
         let knownTagArray = await messenger.messages.tags.list();
         
         // Loop through the tags on the email and find any matches
