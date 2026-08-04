@@ -40,9 +40,7 @@
         "messagesRead",
         "messagesTagsList",
         "storage",
-        "menus"
-    ],
-    "optional_permissions": [
+        "menus",
         "<all_urls>"
     ],
     "icons": {
