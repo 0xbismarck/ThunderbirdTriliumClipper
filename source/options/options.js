@@ -160,12 +160,15 @@ function loadOptionsFields(storedParameters)
 
 // Function to turn the configured Trilium URL into a match pattern covering just
 // that host. Returns "" if the URL cannot be read.
+//
+// The port is left out on purpose. See the note on the copy of this function in
+// background.js: a match pattern carrying a port matches no URL at all in Gecko.
 function triliumOriginPattern(triliumdb) {
 
     // Catch the error thrown by URL() when the configured address is not a URL.
     try {
         let triliumUrl = new URL(triliumdb);
-        return triliumUrl.protocol + "//" + triliumUrl.host + "/*";
+        return triliumUrl.protocol + "//" + triliumUrl.hostname + "/*";
     } catch(e) {
         onError("triliumOriginPattern - " + e);
     }
