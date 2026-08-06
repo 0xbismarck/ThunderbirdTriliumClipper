@@ -194,8 +194,10 @@ async function refreshTriliumHostPermissionStatus() {
 
     if(await browser.permissions.contains({ origins: [originPattern] })) {
         elem.innerText = "Granted for " + originPattern;
+        elem.style.color = "black"; // optional, reset to default
     } else {
         elem.innerText = "Not granted for " + originPattern;
+        elem.style.color = "red";
     }
 }
 
