@@ -713,12 +713,19 @@ function getRecipients(msg, field, yamlFormat=false)
 // Function to turn the configured Trilium URL into a match pattern covering just
 // that host, so the add-on can ask for access to the user's own Trilium server
 // rather than to every site. Returns "" if the URL cannot be read.
+//
+// The port is left out on purpose. Gecko accepts a match pattern carrying one but
+// then matches no URL at all with it (Mozilla bug 1468162), so a pattern built
+// from a Trilium address like http://localhost:37840 would be granted and still
+// leave the request to that server unprivileged, which shows up as a CORS failure
+// rather than as a permission error. Leaving the port off costs nothing, because
+// Gecko ignores ports when matching and so covers the whole host either way.
 function triliumOriginPattern(triliumdb) {
 
     // Catch the error thrown by URL() when the configured address is not a URL.
     try {
         let triliumUrl = new URL(triliumdb);
-        return triliumUrl.protocol + "//" + triliumUrl.host + "/*";
+        return triliumUrl.protocol + "//" + triliumUrl.hostname + "/*";
     } catch(e) {
         onError(e, ("triliumOriginPattern - " + triliumdb));
     }
