@@ -23,7 +23,6 @@ const clipModeButtons = {
     "clip-plaintext":   "plaintext",
     "clip-html":        "html",
     "clip-both":        "both",
-    "clip-pdf":         "pdf",
 };
 
 // Function to request a clip of the displayed message in the given mode.

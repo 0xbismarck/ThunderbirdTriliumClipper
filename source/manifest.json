@@ -8,8 +8,7 @@
     "browser_specific_settings": {
         "gecko": {
             "id": "TriliumClipper@TriliumNext.com",
-            "strict_min_version": "121.0",
-            "strict_max_version": "155.*"
+            "strict_min_version": "121.0"
         }
     },
     "message_display_action": {
@@ -25,16 +24,6 @@
         "scripts": [
             "background.js"
         ]
-    },
-    "experiment_apis": {
-        "NativePdf": {
-            "schema": "api/NativePdf/schema.json",
-            "parent": {
-                "scopes": ["addon_parent"],
-                "paths": [["NativePdf"]],
-                "script": "api/NativePdf/implementation.js"
-            }
-        }
     },
     "permissions": [
         "messagesModify",

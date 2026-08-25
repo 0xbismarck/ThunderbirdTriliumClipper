@@ -38,15 +38,13 @@ A message can be clipped in any of the formats below. Which one is used, and whe
 - *Plain Text* - Clips the plain text version of the message. Formatting, images, and links are dropped, but the text is preserved exactly as it was laid out in the email.
 - *HTML* - Clips the formatted HTML version of the message, keeping its styling and links. This is the format used by previous versions of the add-on.
 - *Plain Text and HTML* - Clips both versions into a single note, one after the other, separated by a horizontal rule.
-- *PDF* - Renders the message into a PDF and clips it as a file note, which Trilium Notes displays in its built-in PDF viewer. The message is rendered by Thunderbird's own print engine, so the PDF looks like the message does on screen, and its text stays selectable and searchable.
+- *PDF* - This version of TriliumClipper has the feature removed because the API is experimental. If you would like to have this feature, you'll need to download the add-on from the [releases page](https://github.com/0xbismarck/ThunderbirdTriliumClipper/releases).
 
 If a message does not contain the version you asked for (for example, a plain text only email clipped as HTML), the add-on falls back to the version the message does contain.
 
 If the *Default Clip Format* is set to one of the formats instead of *Ask every time*, no menu appears. Pressing the "Trilium" button clips the message straight away in that format.
 
-Clipping a message by right clicking it in the message list never shows this menu. Those clips use the *Default Clip Format* set on the Options tab, and use HTML when that option is set to *Ask every time*. Note that clipping as a PDF requires the message to be open, because the message has to be drawn before it can be printed. If you set the default clip format to PDF, right clicking a message in the message list without opening it will report that the message needs to be opened first.
-
-Because the PDF is rendered from the message as it is displayed, remote images that Thunderbird has blocked stay blocked in the PDF. Clipping a message never loads remote content, so it will not trip the tracking pixels some senders use to detect that a message was read.
+Clipping a message by right clicking it in the message list never shows this menu. Those clips use the *Default Clip Format* set on the Options tab, and use HTML when that option is set to *Ask every time*.
 
 See the [Add-on Options section of the User Guide](./docs/user-guide.md#Add-on-Options) for the full list of options, including *Default Clip Format*.
 
@@ -54,8 +52,7 @@ See the [Add-on Options section of the User Guide](./docs/user-guide.md#Add-on-O
 
 Once your email has been clipped, it will look like the screenshot below. By default, your note will be placed under the note with the ParentNoteId that was configured in the Options.
 
-If you only wish to clip a portion of an email's text, select the text before pressing the Trilium Notes icon. A selection is clipped as plain text. Note that this does not apply to the PDF clip format, which always renders the whole message.
-
+If you only wish to clip a portion of an email's text, select the text before pressing the Trilium Notes icon. A selection is clipped as plain text.
 
 ![This is what a clipped email message looks like in Trilium Notes. The location for the note, the format of the file name, and the format of the note itself are all customized via the "Options" tab..](docs/ClippedNote.png)
 
@@ -73,9 +70,7 @@ If TriliumClipper is not properly working, please take a moment to reread the in
 [Troubleshooting section of the User Guide](./docs/user-guide.md#Troubleshooting).
 
 ## Limitations & Future Features
-TriliumClipper can clip a message as plain text, as HTML, as both, or as a PDF. See the *Usage* section above for what each format does and how to choose between them.
-
-Clipping a message as a PDF needs Thunderbird 121 or later and requires the message to be open, since the message has to be drawn before it can be printed.
+TriliumClipper can clip a message as plain text, as HTML, or as both. See the *Usage* section above for what each format does and how to choose between them.
 
 Saving embedded images from an HTML email requires the optional attachment saving feature described above to be enabled.
 

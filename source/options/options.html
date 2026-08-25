@@ -102,17 +102,13 @@
 
   <hr>
   <h1>Default Clip Format</h1>
-  Messages can be clipped as plain text, as HTML, as both of them in one note, or as a PDF file.
+  Messages can be clipped as plain text, as HTML, or as both of them in one note.
   Choose below which of those formats the Trilium button above a message clips in.
   <p>Choosing <i>Ask every time</i> instead makes the Trilium button open a menu, so that you
   pick the format each time you clip a message. With any other setting, pressing the button
   clips the message straight away in the format chosen here, without showing the menu.
   <p>Clipping a message from the message list right-click menu never shows the menu. Those
   clips use the format chosen below, and use HTML when <i>Ask every time</i> is chosen.
-  <p>Note that the PDF format renders the message with Thunderbird's own print engine, which
-  requires the message to be open and Thunderbird 121 or later. Choosing PDF as the default
-  format means messages clipped from the message list right-click menu, without being opened
-  first, cannot be clipped.
   <p>One of the features of HTML email is the ability to embed graphical images within the message.
   Clipping those images as part of an HTML clip needs the optional <i>Message Attachments</i>
   feature described above to be enabled. Other HTML content (character formatting, images hosted
@@ -125,7 +121,6 @@
       <option value="plaintext">Plain Text</option>
       <option value="html">HTML</option>
       <option value="both">Plain Text and HTML</option>
-      <option value="pdf">PDF</option>
     </select>
     <br>
     <button id="submit-defaultClipMode">Save</button>

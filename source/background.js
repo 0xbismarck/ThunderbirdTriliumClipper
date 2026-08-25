@@ -34,7 +34,6 @@ const ATTACHMENTMODE_CHILDNOTE  = "childnote";   // Store as child notes of the 
 const CLIPMODE_PLAINTEXT = "plaintext";  // Clip the plain text part of the message
 const CLIPMODE_HTML      = "html";       // Clip the HTML part of the message
 const CLIPMODE_BOTH      = "both";       // Clip both parts into one note
-const CLIPMODE_PDF       = "pdf";        // Clip the message as a PDF file note
 
 // Not a format in itself. Stored as the default clip mode to ask the user which
 // of the formats above to use each time a message is clipped.
@@ -770,110 +769,6 @@ async function ensureTriliumHostPermission(triliumdb) {
 }
 
 
-///////////////////////////
-// PDF clipping functions
-///////////////////////////
-
-// Function to render the displayed message into a PDF. Returns a Uint8Array of
-// the PDF file.
-//
-// The rendering is done by Thunderbird's own print engine through the NativePdf
-// experiment API, so the PDF reproduces the message exactly as the message pane
-// draws it and its text stays selectable. The message is rendered as currently
-// displayed, so remote content that Thunderbird has blocked stays blocked and
-// clipping a message never loads remote images behind the user's back.
-async function buildMessagePdf(tabId)
-{
-    let pdfByteArray = await browser.NativePdf.generate(tabId);
-
-    // The experiment API hands the file back as a plain array of bytes.
-    return new Uint8Array(pdfByteArray);
-}
-
-
-// Function to upload a PDF to Trilium as a file note. ETAPI carries note content
-// as JSON, which cannot hold the PDF's binary data, so this creates the note
-// first and then PUTs the file itself to the note's content endpoint.
-async function uploadPdfNote(pdfBytes, noteSubject, triliumdb, headers, triliumParentNoteId)
-{
-    let uploadInfo = { abortController: new AbortController() };
-
-    // Trilium shows the note title as the file's name, so give it a .pdf suffix.
-    let pdfFilename = noteSubject + ".pdf";
-
-    // Create the file note. The content is a placeholder replaced by the PUT below.
-    let createFetchInfo = {
-        mode: "cors",
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-            parentNoteId: triliumParentNoteId,
-            title: noteSubject,
-            type: "file",
-            mime: "application/pdf",
-            content: "placeholder"
-        }),
-        signal: uploadInfo.abortController.signal,
-    };
-
-    let response = await fetch(triliumdb + "/create-note", createFetchInfo);
-    let json = await response.json();
-
-    // Stop here if the note could not be created.
-    if(!response.ok) {
-        console.log(json.message);
-        await displayAlert("TriliumClipper: " + json.message);
-        return null;
-    }
-
-    let noteId = json.note.noteId;
-    console.log("Created PDF file note " + noteId);
-
-    // Now send the PDF itself as the note's content.
-    await displayStatusText("TriliumClipper: Uploading PDF to Trilium Notes application.");
-
-    // Send the raw bytes, so use a binary content type rather than the JSON one.
-    let contentHeaders = {
-        "authorization": headers["authorization"],
-        "content-type": "application/octet-stream"
-    };
-
-    let contentFetchInfo = {
-        mode: "cors",
-        method: "PUT",
-        headers: contentHeaders,
-        body: pdfBytes,
-        signal: uploadInfo.abortController.signal,
-    };
-
-    let contentResponse = await fetch(triliumdb + "/notes/" + noteId + "/content", contentFetchInfo);
-
-    // The content endpoint replies 204 with no body on success.
-    if(!contentResponse.ok) {
-        console.log("failure uploading PDF content, status " + contentResponse.status);
-        await displayAlert("TriliumClipper: Could not upload the PDF to Trilium Notes.");
-        return null;
-    }
-
-    // Label the note with the original filename so Trilium offers it on download.
-    let labelFetchInfo = {
-        mode: "cors",
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-            noteId: noteId,
-            type: "label",
-            name: "originalFileName",
-            value: pdfFilename
-        }),
-        signal: uploadInfo.abortController.signal,
-    };
-    await addNoteAttribute(labelFetchInfo, triliumdb);
-
-    return noteId;
-}
-
-
 // Function to actually clip the email. Pass in the saved array of parameters and
 // the mode describing the format the message should be clipped in.
 async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
@@ -1086,42 +981,7 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
         "content-type": "application/json"
     };
 
-    // A PDF clip creates a file note holding the rendered message rather than a
-    // text note built from the note content template, so handle it here.
-    if(CLIPMODE_PDF == clipMode) {
-        await displayStatusText("TriliumClipper: Rendering message as PDF.");
 
-        // The message is rendered by Thunderbird's print engine, which draws the
-        // whole message from the message pane. Any text the user selected is
-        // therefore not used, and the message headers come from the rendering
-        // rather than from the note content template.
-        try {
-            let pdfBytes = await buildMessagePdf(tabs[0].id);
-
-            let pdfNoteId = await uploadPdfNote(pdfBytes, noteSubject, triliumdb,
-                headers, triliumParentNoteId);
-
-            // Tag and label the note as the text clip path does.
-            if(null != pdfNoteId) {
-                labelNewNote(message, pdfNoteId, triliumdb, headers);
-
-                // Store the message's attachments on the PDF note, as the text
-                // clip path does. The PDF holds the rendered message only, so the
-                // attached files still have to be stored separately.
-                await saveAttachments(message.id, pdfNoteId, attachmentSaveEnabled,
-                    attachmentStorageMode, triliumdb, headers);
-
-                await displayStatusText("TriliumClipper: Message clipped as PDF.");
-            }
-        }
-        catch (e) {
-            onError(e, "clipEmail - PDF");
-            await displayAlert("TriliumClipper: Could not render the message as a PDF. " +
-                "Open the message before clipping it as a PDF.");
-        }
-
-        return;
-    }
 
     let fetchInfo = {
         mode: "cors",
