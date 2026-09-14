@@ -57,7 +57,8 @@ defaultParameters["maxEmailSize"] = "Disabled";
 defaultParameters["triliumdb"]  = "http://localhost:37840/etapi";
 defaultParameters["triliumUser"] = "etapi";
 defaultParameters["triliumToken"] = "[ETAPI Token]";
-defaultParameters["parentNoteId"] = ""
+defaultParameters["parentNoteId"] = "";
+defaultParameters["noteColor"]  = "";
 defaultParameters["messageLinkText"] = "Click to open message in email client"
 
 // Store the data to local storage with the given key
@@ -244,6 +245,8 @@ document.getElementById('default-triliumToken').onclick = function() {storeDefau
 document.getElementById('submit-parentNoteId').onclick = function() {storeOption("parentNoteId"); };
 document.getElementById('default-parentNoteId').onclick = function() {storeDefault("parentNoteId"); };
 
+document.getElementById('submit-noteColor').onclick = function() {storeOption("noteColor"); };
+document.getElementById('default-noteColor').onclick = function() {storeDefault("noteColor"); };
 
 document.getElementById('submit-attachmentSaveEnabled').onclick = function() {storeOption("attachmentSaveEnabled"); };
 document.getElementById('default-attachmentSaveEnabled').onclick = function() {storeDefault("attachmentSaveEnabled"); };

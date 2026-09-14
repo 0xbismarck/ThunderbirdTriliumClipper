@@ -915,7 +915,8 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             triliumToken = storedParameters["triliumToken"];
             triliumParentNoteId = storedParameters["parentNoteId"];
             messageLinkText = storedParameters["messageLinkText"]
-
+            noteColor = storedParameters["noteColor"]
+            
             // Correct any parameters the won't cause fatal errors when missing
             // by giving them default values.
             if(undefined == attachmentStorageMode) {attachmentStorageMode = ATTACHMENTMODE_ATTACHMENT;}
@@ -1153,11 +1154,16 @@ async function clipEmail(storedParameters, clipMode=CLIPMODE_HTML)
             // console.log("Trilium Result: " + json.note.noteId);
             labelNewNote(message, json.note.noteId, triliumdb, headers);
             updateNoteIcon(json.note.noteId, triliumdb, headers); // @TODO - updating this configurable
+            console.log("Color Value: "+ noteColor)
+            console.log("NoteId: "+ json.note.noteId)
+
+            updateNoteColor(json.note.noteId, triliumdb, headers, noteColor)
 
             // Store the message's attachments on the note just created. This is
             // done here because storing them needs the new note's ID.
             await saveAttachments(message.id, json.note.noteId, attachmentSaveEnabled,
                 attachmentStorageMode, triliumdb, headers);
+
 
             await displayStatusText("TriliumClipper: Message clipped.");
         }
@@ -1238,6 +1244,33 @@ async function updateNoteIcon( noteId, triliumdb, headers ) {
         signal: uploadInfo.abortController.signal,
     };
     addNoteAttribute(fetchInfo, triliumdb)
+}
+
+async function updateNoteColor (noteId, triliumdb, headers, color)
+// Optional #color label so imported emails stand out in the note tree.
+{
+
+    const colorValue = String( color || "").trim();
+
+    if (colorValue){
+
+        let uploadInfo = { abortController: new AbortController() };
+    
+        let fetchInfo = {
+            mode: "cors",
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+                noteId: noteId,
+                type: "label",
+                name: "color",
+                value: colorValue
+            }),
+    
+            signal: uploadInfo.abortController.signal,
+        };
+        addNoteAttribute(fetchInfo, triliumdb)
+    }
 }
 
 async function addNoteAttribute (fetchInfo, triliumdb) {

@@ -76,7 +76,7 @@ There are a number of options that a user can use to configure the clipper add-o
   data is saved in Obsidian by use of placeholders in the text. See the Options tab of the add-on for a brief rundown of the
   different placeholder fields or the [Placeholders](#Placeholders) section of this guide for the definitive list of
   supported placeholders.
-
+- *Note color* - The settings page has an optional **Note color** field. Enter a CSS color (for example `#3788d8` or `teal`) and imported emails get a `#color` label so they stand out in the note tree. Leave it blank for no color.
 
 ## Placeholders
 Message specific information can be inserted into a note by putting "placeholders" into the *Filename Template* and *Note Content Template* fields in the options tab.
